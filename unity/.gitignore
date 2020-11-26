@@ -68,3 +68,9 @@ crashlytics-build.properties
 
 
 # End of https://www.gitignore.io/api/unity
+
+Ruler\ of\ the\ Plane_Data/*
+Mono/*
+UnityCrashHandler64.exe
+UnityPlayer.dll
+Ruler\ of\ the\ Plane.exe
