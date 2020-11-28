@@ -15,22 +15,28 @@ Erik will be working on the RQT components. Paul will be working on the convex h
 
 The /unity/Assets/Scripts/RubberBanding directory is split up into Controller, Model and UI directories. Below I will detail the source files in each directory:
 
-/Controller:
+# /Controller:
 
 rbPlayer.cs: Class to accomodate variables related to a player such as a score and an ID.
+
 rbAI.cs: Subclass of the player class which extends the player class with AI-related methods so that we can implement an AI opponent.
+
 rnController: Top-level controller which manages the game.
 
-/Model:
+# /Model:
 
 rbConvexHull.cs: Class to accomodate the convex hull data structure together with methods related to convex hull construction and updates.
+
 rbGameManager.cs: Manages game state such as the turns, what points are being removed, score and other game related logic.
+
 rbLevel.cs: Contains info and methods about the current level, and ties in with the UI to draw it.
+
 rbRangeTree: Class to implement the rangeQueryTree.
 
-/UI
+# /UI
 
 rbPoint.cs: Class to accomodate UI logic to draw a point.
+
 rbSegment.cs: Class to accomodate UI logic to draw line segments.
 
 If there are any further questions about our division of work, feel free to message us on discord.
