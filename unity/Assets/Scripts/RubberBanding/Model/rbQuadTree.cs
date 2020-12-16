@@ -1,33 +1,27 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class rbQuadTree{
+public class RbQuadTree{
 
-    private Node root;
+    private Node Root;
 
-    public rbQuadTree(List<rbPoint> points)
+    public RbQuadTree(List<rbPoint> points)
     {
         // Create bounding box of all points
-        float left = points[0].Pos.x;
-        float right = points[0].Pos.x;
-        float top = points[0].Pos.y;
-        float bottom = points[0].Pos.y;
-        foreach (rbPoint p in points)
-        {
-            left = Mathf.Min(p.Pos.x, left);
-            right = Mathf.Max(p.Pos.x, right); // TODO: + eps
-            bottom = Mathf.Min(p.Pos.y, bottom); // TODO: + eps
-            top = Mathf.Max(p.Pos.y, top);
-        }
-        BoundingRect bound = new BoundingRect(top, right, bottom, left);
+        float left = points.Min(e => e.Pos.x);
+        float right = points.Max(e => e.Pos.x) + 0.00001f;
+        float top = points.Max(e => e.Pos.y) + 0.00001f;
+        float bottom = points.Min(e => e.Pos.y);
+        AARect rectangle = new AARect(top, right, bottom, left);
 
         // Build QuadTree
-        this.root = BuildQuadTree(null, points, bound);
+        this.Root = Build(null, points, rectangle);
     }
 	
-    private Node BuildQuadTree(Node parent, List<rbPoint> points, BoundingRect bound)
+    private Node Build(Node parent, List<rbPoint> points, AARect rectangle)
     {
-        Node n = new Node(parent, points.Capacity, bound);
+        Node n = new Node(parent, points.Capacity, rectangle);
         
         // Edge case: only one point has to fit in this box
         if (points.Capacity == 1)
@@ -37,28 +31,15 @@ public class rbQuadTree{
         }
 
         // Split bounding rectangle into four pieces
-        List<BoundingRect> boundingRects = bound.getSplit();
-
-        // Split points among rectangle split
-        List<List<rbPoint>> pointSplit = new List<List<rbPoint>>();
-        for (int i = 0; i < points.Capacity; i++)
-        {
-            rbPoint p = points[i];
-            for (int j = 0; j < boundingRects.Capacity; j++)
-            {
-                if (boundingRects[i].contains(p))
-                {
-                    pointSplit[j].Add(p);
-                    break;
-                }
-            }
-        }
+        List<AARect> boundingRects = rectangle.getSplit();
 
         // Recursively build tree. Note: depth first
+        List<List<rbPoint>> pointSplit = new List<List<rbPoint>>();
         for (int i = 0; i < boundingRects.Capacity; i++)
         {
-            n.children.Add(BuildQuadTree(n, pointSplit[i], boundingRects[i]));
+            n.children.Add(Build(n, points.FindAll(p => boundingRects[i].Contains(p)), boundingRects[i]));
         }
+
         
         return n;
     }
@@ -66,13 +47,13 @@ public class rbQuadTree{
     public void RemovePoint(rbPoint p)
     {
         // First, seach in which node this p belongs
-        Node n = root;
+        Node n = Root;
         while (n.point == null)
         {
             for (int i = 0; i < n.children.Capacity; i++)
             {
                 Node child = n.children[i];
-                if (child.boundingRect.contains(p))
+                if (child.boundingRect.Contains(p))
                 {
                     n = child;
                     break;
@@ -87,7 +68,7 @@ public class rbQuadTree{
 
             // Edge case: the point was part of the root 
             // i.e. tree is empty now
-            if (n == root)
+            if (n == Root)
             {
                 n.size = 0;
                 return;
@@ -97,7 +78,7 @@ public class rbQuadTree{
             while (n.parent.size == 1)
             {
                 n = n.parent;
-                if (n == root) break;
+                if (n == Root) break;
             }
             n.children = null;
             while (n != null)
@@ -112,17 +93,17 @@ public class rbQuadTree{
      * Recursively retrieve all points from tree that lie inside BoundingRect bound.
      * Note: this action does not remove the found points.
      */
-    public List<rbPoint> getPointsInRectangle(BoundingRect bound)
+    public List<rbPoint> getPointsInRectangle(AARect bound)
     {
-        return getPointsInRectangle(root, bound);
+        return FindInRange(Root, bound);
     }
 
-    private List<rbPoint> getPointsInRectangle(Node n, BoundingRect bound)
+    private List<rbPoint> FindInRange(Node n, AARect bound)
     {
         List<rbPoint> points = new List<rbPoint>();
         foreach (Node child in n.children)
         {
-            if (child.boundingRect.overlaps(bound))
+            if (child.boundingRect.Overlaps(bound))
             {
                 if (child.point != null)
                 {
@@ -130,7 +111,7 @@ public class rbQuadTree{
                 }
                 else
                 {
-                    points.AddRange(getPointsInRectangle(child, bound));
+                    points.AddRange(FindInRange(child, bound));
                 }                    
             }
         }
@@ -142,78 +123,52 @@ public class rbQuadTree{
  * Axis aligned rectangle used in the construction
  * and utilization of Quadtree
  */
-public class BoundingRect
+public class AARect
 {
-    private Vector2 topLeft;
-    private Vector2 bottomRight;
-    
-    public BoundingRect(rbPoint tl, rbPoint br)
+    public float Left { get; private set; }
+    public float Right { get; private set; }
+    public float Top { get; private set; }
+    public float Bottom { get; private set; }
+
+    public AARect(float top, float right, float bottom, float left)
     {
-        topLeft = tl.Pos;
-        bottomRight = br.Pos;
+        Left = left;
+        Top = top;
+        Right = right;
+        Bottom = bottom;
     }
 
-    public BoundingRect(Vector2 tl, Vector2 br)
+    public AARect(Vector2 tl, Vector2 br)
     {
-        topLeft = new Vector2(tl.x, tl.y);
-        bottomRight = new Vector2(br.x, br.y);
+        Left = tl.x;
+        Right = br.x;
+        Top = tl.y;
+        Bottom = br.y;
     }
 
-    public BoundingRect(float top, float right, float bottom, float left)
-    {
-        topLeft = new Vector2(left, top);
-        bottomRight = new Vector2(right, bottom);
-    }
-
-    public float left()
-    {
-        return topLeft.x;
-
-    }
-
-    public float right()
-    {
-        return bottomRight.x;
-    }
-
-    public float top()
-    {
-        return topLeft.y;
-    }
-
-    public float bottom()
-    {
-        return bottomRight.y;
-    }
-
-    public BoundingRect clone()
-    {
-        return new BoundingRect(topLeft, bottomRight);
-    }
-
-    public bool contains(rbPoint p)
+    public bool Contains(rbPoint p)
     {
         // NOTE: top and left inclusive, bottom and right exclusive.
-        return left() <= p.Pos.x && p.Pos.x < right() && bottom() < p.Pos.y && p.Pos.y <= top();
+        return Left <= p.Pos.x && p.Pos.x < Right && Bottom < p.Pos.y && p.Pos.y <= Top;
     }
 
-    public bool overlaps(BoundingRect o)
+    public bool Overlaps(AARect o)
     {
         // TODO: I am not 100% sure about this formula.
-        bool LR = left() < o.right() && o.left() < right();
-        bool TB = bottom() < o.top() && o.bottom() < top();        
+        bool LR = Left < o.Right && o.Left < Right;
+        bool TB = Bottom < o.Top && o.Bottom < Top;
         return LR && TB;
     }
 
-    public List<BoundingRect> getSplit()
+    public List<AARect> getSplit()
     {
-        float horCenter = (top() + bottom()) / 2;
-        float vertCenter = (left() + right()) / 2;
-        return new List<BoundingRect>{
-            new BoundingRect(top(), vertCenter, horCenter, left()),     // TL
-            new BoundingRect(top(), right(), horCenter, vertCenter),    // TR
-            new BoundingRect(horCenter, vertCenter, bottom(), left()),  // BL
-            new BoundingRect(horCenter, right(), bottom(), vertCenter)  // BR
+        float horCenter = (Top + Bottom) / 2;
+        float vertCenter = (Left + Right) / 2;
+        return new List<AARect>{
+            new AARect(Top, vertCenter, horCenter, Left),     // TL
+            new AARect(Top, Right, horCenter, vertCenter),    // TR
+            new AARect(horCenter, vertCenter, Bottom, Left),  // BL
+            new AARect(horCenter, Right, Bottom, vertCenter)  // BR
         };
     }    
 }
@@ -222,11 +177,11 @@ public class Node
 {
     public Node parent;
     public int size;
-    public BoundingRect boundingRect;
+    public AARect boundingRect;
     public List<Node> children;
     public rbPoint point;
 
-    public Node(Node parent, int size, BoundingRect boundingRect)
+    public Node(Node parent, int size, AARect boundingRect)
     {
         this.parent = parent;
         this.boundingRect = boundingRect;
