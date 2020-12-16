@@ -4,6 +4,9 @@
 
 	public class rbController : MonoBehaviour {
 
+		// The last clicked rbPoint by the player / AI 
+		public rbPoint rb_chosenPoint = null;
+		[SerializeField]
 		public LineRenderer rb_line;
 		[SerializeField]
 		private GameObject rb_roadMeshPrefab;
@@ -16,14 +19,9 @@
 		// List which contains all points in the current level
 		internal List<rbPoint> rb_points;
 
-		// The last clicked rbPoint by the player / AI 
-		public rbPoint rb_chosenPoint = null;
-		[SerializeField]
-
-		// Use this for initialization
 		void Start () {
-			// get unity objects
-            // rb_points = FindObjectsOfType<rbPoint>().ToList();
+			// Init point set from level
+
 
 			// Init players
 			rb_players.Add(new rbPlayer(0, 0));
@@ -45,7 +43,7 @@
 				RemovePoint(rb_chosenPoint);
 				
 				// Add scores and such, update hull
-				
+
 				// Check if this move ends the game
 				CheckGameOver();
 				// Reset state, switch player turn state
@@ -75,7 +73,6 @@
 		{
 			// implement
 		}
-	}
-		
+	}	
 }
 
