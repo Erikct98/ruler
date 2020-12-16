@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\unity",
+    "\\unity\\Assets",
+    "\\unity\\Assets\\Scripts",
+    "\\unity\\Assets\\Scripts\\RubberBanding",
+    "\\unity\\Assets\\Scripts\\RubberBanding\\Controller",
+    "\\unity\\Assets\\Scripts\\RubberBanding\\Model",
+    "\\unity\\Assets\\Scripts\\RubberBanding\\UI"
+  ],
+  "SelectedNode": "\\unity\\Assets\\Scripts\\RubberBanding\\Controller\\rbAI.cs",
+  "PreviewInSolutionExplorer": false
+}
