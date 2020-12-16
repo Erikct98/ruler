@@ -1,5 +1,4 @@
 ﻿namespace RubberBanding {
-	using System.Collections;
 	using System.Collections.Generic;
 	using UnityEngine;
 
@@ -11,11 +10,11 @@
 		[SerializeField]
 		private List<rbPlayer> rb_players;
 
-		// List which contains all points in the current level
-		private List<rbPoint> rb_points;
+		// Current convex hull
+		internal rbConvexHull rb_convexHull;
 
-		// List of all currently drawn line segments
-		private HashSet<rbSegment> rb_segments;
+		// List which contains all points in the current level
+		internal List<rbPoint> rb_points;
 
 		// The last clicked rbPoint by the player / AI 
 		public rbPoint rb_chosenPoint = null;
@@ -25,13 +24,17 @@
 		void Start () {
 			// get unity objects
             // rb_points = FindObjectsOfType<rbPoint>().ToList();
-            rb_segments = new HashSet<rbSegment>();
 
 			// Init players
 			rb_players.Add(new rbPlayer(0, 0));
 			rb_players.Add(new rbPlayer(1, 0));
 
+			// Make initial convex hull
+			rb_convexHull = new rbConvexHull();
+			rb_convexHull.BuildConvexHull(rb_points);
+
 			// Start game
+			
 
 		}
 		
@@ -39,14 +42,14 @@
 		void Update () {
 			if (rb_chosenPoint != null) {
 				// Delete this point
-				this.RemovePoint(rb_chosenPoint);
+				RemovePoint(rb_chosenPoint);
 				
 				// Add scores and such, update hull
-
+				
 				// Check if this move ends the game
-				this.CheckGameOver();
+				CheckGameOver();
 				// Reset state, switch player turn state
-				this.NextTurn();
+				NextTurn();
 				
 			}
 		}
@@ -58,12 +61,13 @@
 		}
 
 		// Removes a point from the level
-		void RemovePoint(rbPoint point)
+		bool RemovePoint(rbPoint point)
 		{
 			// @Jurrien van Winden
 			point.deleted = true;
 
 			// Update convex hull
+			return rb_convexHull.RemovePoint(point);
 		}
 		// Checks whether all points have been deleted except 2, AKA no pegs can be removed anymore and the game should end
 		// Or we could check if we have a convex hull of size <= 2 ?

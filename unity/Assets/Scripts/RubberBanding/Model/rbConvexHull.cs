@@ -1,16 +1,17 @@
-using System.Collections;
+namespace RubberBanding
+{
 using System.Collections.Generic;
 using UnityEngine;
 
 public class rbConvexHull : MonoBehaviour {
     
 	
-    void BuildConvexHull(List<rbPoint> points)
+    public void BuildConvexHull(List<rbPoint> points)
     {
         
     }
 
-    bool RemovePoint(rbPoint p)
+    public bool RemovePoint(rbPoint p)
     {
         return false;
     }
@@ -18,4 +19,5 @@ public class rbConvexHull : MonoBehaviour {
     void UpdateConvexHull(){
         
     }
+}
 }
