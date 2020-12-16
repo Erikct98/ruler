@@ -1,6 +1,7 @@
 ﻿namespace RubberBanding {
 	using System.Collections.Generic;
 	using UnityEngine;
+    using System.Linq;
 
 	public class rbController : MonoBehaviour {
 
@@ -11,6 +12,12 @@
 		[SerializeField]
 		private GameObject rb_roadMeshPrefab;
 		[SerializeField]
+
+		private GameObject rb_pointPrefab;
+        [SerializeField]
+
+		// List of instantiated objects for a level
+		private List<GameObject> instantiatedObjects;
 		private List<rbPlayer> rb_players;
 
 		// Current convex hull
@@ -18,6 +25,10 @@
 
 		// List which contains all points in the current level
 		internal List<rbPoint> rb_points;
+
+		
+        private List<rbLevel> rb_levels;
+		[SerializeField]
 
 		void Start () {
 			// Init point set from level
@@ -32,8 +43,37 @@
 			rb_convexHull.BuildConvexHull(rb_points);
 
 			// Start game
-			
+			InitGame();
 
+		}
+
+		void InitGame() 
+		{
+			// clear old level
+
+			// pick a level
+			int levelIndex = Random.Range(0, rb_levels.Count);
+
+            // initialize point set from level
+            foreach (var point in rb_levels[levelIndex].Points)
+            {
+                var obj = Instantiate(rb_pointPrefab, point, Quaternion.identity) as GameObject;
+                obj.transform.parent = this.transform;
+                instantiatedObjects.Add(obj);
+            }
+
+            // create point set
+            rb_points = FindObjectsOfType<rbPoint>().ToList();
+
+            // compute convex hull
+            rb_convexHull.BuildConvexHull(rb_points);
+
+		}
+
+		// Start the game so that the players can play
+		void startGame()
+		{
+			// @Jurrien van Winden
 		}
 		
 		// Update is called once per frame
