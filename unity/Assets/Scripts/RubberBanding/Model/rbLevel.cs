@@ -1,48 +1,18 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+namespace RubberBanding
+{
+    using System.Collections.Generic;
+    using UnityEngine;
 
-public class rbLevel : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	    /*
-         * TODO: paint new elements?
-         */
-	}
-
-    void GenerateGame(int seed)
+    /// <summary>
+    /// Data container for rubberbanding level containing initial point set and possibly initial convex hull.
+    /// </summary>
+    [CreateAssetMenu(fileName = "rubberbandingLevelNew", menuName = "Levels/Rubberbanding Level")]
+    public class rbLevel : ScriptableObject
     {
-        /*
-         * TODO: initialize a new game based on the given seed
-         * This includes:
-         * - Generating a random set of points in the XY plane
-         * - Initialize the convex hull
-         * - Build the range tree based on the points
-         */
-    }
+        [Header("Point set")]
+        public List<Vector2> Points = new List<Vector2>();
 
-    void UpdateConvexHull(rbPoint p)
-    {
-        /*
-         * TODO: check if p in CH. 
-         * If so, update CH and score.
-         * remove p from RQT and from board.
-         */
-    }
-
-    double ComputeScore(rbPoint one, rbPoint two, rbPoint three)
-    {
-        /*
-         * TODO: compute the surface of the triangle described
-         * by one, two and three
-         */
-        return 0.0;
+        [Header("Initial convex hull")]
+        public List<Vector2> ConvexHull = new List<Vector2>();
     }
 }
