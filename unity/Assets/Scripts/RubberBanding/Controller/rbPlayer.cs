@@ -6,9 +6,9 @@ public class rbPlayer
 
     public int id;
     public int score;
-    public rbPlayer(string id, string score)
+    public rbPlayer(int id, int score)
     {
-        id = id;
-        score = score;
+        this.id = id;
+        this.score = score;
     }
 }

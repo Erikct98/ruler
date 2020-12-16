@@ -1,34 +1,31 @@
 
-
+// @Jurrien van Winden
 public class rbAI : rbPlayer 
 {
-    public int id;
-    public int score;
     public string method;
 
     // For easy reference
     public bool isAI = true;
-    public rbAI(string id, string score, string method)
+    public rbAI(string method, int id, int score) : base(id, score)
     {
-        id = id;
-        score = score;
+
     }
 
     // Chooses a next point by applying a method to remove from the given playing field
-    public ChoosePoint()
+    public void ChoosePoint()
     {
         // Apply method from settings here
         // @Jurrien van Winden
     }
 
     // Greedy method to remove a point from a convex hull, maximizing the area lost (score gained)
-    public greedyMethod()
+    public void greedyMethod()
     {
         // @Jurrien van Winden
     }
 
     // Randomly pick a point to remove
-    public randomMethod()
+    public void randomMethod()
     {
         // @Jurrien van Winden
     }

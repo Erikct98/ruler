@@ -12,10 +12,6 @@ public class rbConvexHull : MonoBehaviour {
 
     bool RemovePoint(rbPoint p)
     {
-        /*
-         * TODO: remove p from tree
-         * return if success
-         */
         return false;
     }
 
