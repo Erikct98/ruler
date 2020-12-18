@@ -26,7 +26,9 @@
 		// List which contains all points in the current level
 		internal List<rbPoint> rb_points;
 
-		
+		// ID of the player whose current turn it is
+		internal int turn;
+
         private List<rbLevel> rb_levels;
 		[SerializeField]
 
@@ -85,10 +87,12 @@
 				// Add scores and such, update hull
 
 				// Check if this move ends the game
-				CheckGameOver();
-				// Reset state, switch player turn state
-				NextTurn();
-				
+				if(CheckGameOver()) {
+					// Do endscreen stuff, show winner, scores
+				} else {
+					// Reset state, switch player turn state
+					NextTurn();
+				}
 			}
 		}
 
@@ -102,16 +106,20 @@
 		bool RemovePoint(rbPoint point)
 		{
 			// @Jurrien van Winden
-			point.deleted = true;
+			point.Removed = true;
 
 			// Update convex hull
 			return rb_convexHull.RemovePoint(point);
 		}
 		// Checks whether all points have been deleted except 2, AKA no pegs can be removed anymore and the game should end
 		// Or we could check if we have a convex hull of size <= 2 ?
-		void CheckGameOver()
+		bool CheckGameOver()
 		{
-			// implement
+			if (rb_convexHull.convexHull.Count <= 2) {
+				// We should end the game here
+				return true;
+			}
+			return false;
 		}
 	}	
 }

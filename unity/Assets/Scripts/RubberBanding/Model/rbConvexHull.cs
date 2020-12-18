@@ -6,7 +6,7 @@ using System.Linq;
 
 public class rbConvexHull : MonoBehaviour {
 
-    List<rbPoint> convexHull;
+    public List<rbPoint> convexHull;
     rbPoint pre;
     rbPoint post;
     rbPoint removed;

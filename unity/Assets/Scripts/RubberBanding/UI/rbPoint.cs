@@ -32,7 +32,7 @@
             */
 
             // Inform the controller that this point was clicked.
-            if (!deleted) {
+            if (!Removed) {
                 rb_controller.rb_chosenPoint = this;
             }
         }
