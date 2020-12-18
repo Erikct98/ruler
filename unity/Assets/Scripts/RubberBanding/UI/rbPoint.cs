@@ -5,6 +5,7 @@
     public class rbPoint : MonoBehaviour {
 
         public Vector2 Pos { get; private set; }
+        public bool Removed { get; set; }
 
         private rbController rb_controller;
 
