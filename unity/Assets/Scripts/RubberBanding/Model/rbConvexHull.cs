@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class rbConvexHull : MonoBehaviour {
+public class rbConvexHull {
 
+    rbQuadTree quad = null;
     public List<rbPoint> convexHull = null;
     rbPoint pre = null;
     rbPoint post = null;
@@ -19,6 +20,8 @@ public class rbConvexHull : MonoBehaviour {
 	
     public List<rbPoint> BuildConvexHull(List<rbPoint> points)
     {
+        quad = new rbQuadTree(points);
+        
         if (points.Count <= 1)
         {
             return points;
@@ -69,40 +72,89 @@ public class rbConvexHull : MonoBehaviour {
 
         if (this.convexHull[0].Equals(p))
         {
-                removed = p;
-                pre = this.convexHull[n - 1];
-                post = this.convexHull[1];
+            this.removed = p;
+            this.pre = this.convexHull[n - 1];
+            this.post = this.convexHull[1];
+            this.quad.RemovePoint(p);//remove if switching to range tree
         } else if (this.convexHull[n - 1].Equals(p))
         {
-            removed = p;
-            pre = this.convexHull[n - 2];
-            post = this.convexHull[0];
+            this.removed = p;
+            this.pre = this.convexHull[n - 2];
+            this.post = this.convexHull[0];
+            this.quad.RemovePoint(p);//remove if switching to range tree
         } else
         {
             for (int i = 0; i < n; i++)
             {
                 if (this.convexHull[i].Equals(p))
                 {
-                    removed = p;
-                    pre = this.convexHull[i - 1];
-                    post = this.convexHull[i + 1];
+                    this.removed = p;
+                    this.pre = this.convexHull[i - 1];
+                    this.post = this.convexHull[i + 1];
+                    this.quad.RemovePoint(p);//remove if switching to range tree
                     break;
                 }
             }
         }
-   
+
+        p.Removed = true;
         return this.convexHull.Remove(p);
     }
 
-    void UpdateConvexHull(rbPoint p){
+        public int UpdateConvexHull(rbPoint p) {
             RemovePoint(p);
             AARect rect = new AARect(this.pre.Pos, this.post.Pos);
-            List<rbPoint> points = getPointsInRectangle(AARect);
+            List<rbPoint> points = this.quad.getPointsInRectangle(AARect);
 
             points.Sort((a, b) =>
             a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
 
+            int n = points.Count();
+            List<rbPoint> patch = new List<rbPoint>(new rbPoint[n]);
 
+            if (CrossProduct(points[0], this.removed, points[n - 1]) == 0)
+            {
+                return 0;
+            } else if (CrossProduct(points[0], this.removed, points[n - 1]) > 0)
+            {
+                int k = 0;
+                for (int i = 0; i < n; i++)
+                {
+                    while (k >= 2 && CrossProduct(patch[k - 2], patch[k - 1], points[i]) <= 0)
+                    {
+                        k--;
+                    }
+                    patch[k++] = points[i];
+                }
+            } else if (CrossProduct(points[0], this.removed, points[n - 1]) < 0)
+            {
+                int k = 0;
+                for (int i = n - 1; i >= 0; i--)
+                {
+                    while (k >= 2 && CrossProduct(patch[k - 2], patch[k - 1], points[i]) <= 0)
+                    {
+                        k--;
+                    }
+                    patch[k++] = points[i];
+                }
+            }
+
+            patch = patch.Take(k).ToList();
+            n = patch.Count();
+
+            int index = this.convexHull.IndexOf(patch[n - 1]);
+
+            for (int i = n - 2; i > 0; i--)
+            {
+                this.convexHull.Insert(index, patch[i]);
+            }
+
+            int score = 0;
+            for (int i = 0; i < n - 1; i++)
+            {
+                score += patch[i].Pos.x(patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x(this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x(patch[i].Pos.y - patch[i + 1].Pos.y);
+            }
+            return score;
         }
-}
+    }
 }
