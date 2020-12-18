@@ -14,12 +14,12 @@
 
         public rbPoint(Vector2 pos){
             Pos = pos;
-            deleted = false;
+            Removed = false;
         }
         private void Awake()
         {
             Pos = new Vector2(transform.position.x, transform.position.y);
-            deleted = false;
+            Removed = false;
             rb_controller = FindObjectOfType<rbController>();
         }
 

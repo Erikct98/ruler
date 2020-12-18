@@ -18,7 +18,8 @@
 
 		// List of instantiated objects for a level
 		private List<GameObject> instantiatedObjects;
-		private List<rbPlayer> rb_players;
+		private rbPlayer player;
+		private rbPlayer opponent;
 
 		// Current convex hull
 		internal rbConvexHull rb_convexHull;
@@ -37,12 +38,10 @@
 
 
 			// Init players
-			rb_players.Add(new rbPlayer(0, 0));
-			rb_players.Add(new rbPlayer(1, 0));
-
-			// Make initial convex hull
-			rb_convexHull = new rbConvexHull();
-			rb_convexHull.BuildConvexHull(rb_points);
+			player = new rbPlayer(0, 0);
+			opponent = new rbPlayer(1, 0);
+			// Set it to be first player turn
+			turn = player.id;
 
 			// Start game
 			InitGame();
@@ -54,28 +53,23 @@
 			// clear old level
 
 			// pick a level
-			int levelIndex = Random.Range(0, rb_levels.Count);
+			// int levelIndex = Random.Range(0, rb_levels.Count);
 
-            // initialize point set from level
-            foreach (var point in rb_levels[levelIndex].Points)
-            {
-                var obj = Instantiate(rb_pointPrefab, point, Quaternion.identity) as GameObject;
-                obj.transform.parent = this.transform;
-                instantiatedObjects.Add(obj);
-            }
+            // // initialize point set from level
+            // foreach (var point in rb_levels[levelIndex].Points)
+            // {
+            //     var obj = Instantiate(rb_pointPrefab, point, Quaternion.identity) as GameObject;
+            //     obj.transform.parent = this.transform;
+            //     instantiatedObjects.Add(obj);
+            // }
 
             // create point set
             rb_points = FindObjectsOfType<rbPoint>().ToList();
-
+			rb_convexHull = new rbConvexHull();
+			
             // compute convex hull
             rb_convexHull.BuildConvexHull(rb_points);
 
-		}
-
-		// Start the game so that the players can play
-		void startGame()
-		{
-			// @Jurrien van Winden
 		}
 		
 		// Update is called once per frame
@@ -99,6 +93,11 @@
 		void NextTurn()
 		{
 			// @Jurrien van Winden
+			if(turn == player.id) {
+   				turn = opponent.id;
+			} else {
+				turn = player.id;
+			}
 			rb_chosenPoint = null;
 		}
 
