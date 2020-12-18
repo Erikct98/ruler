@@ -12,5 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 791c619ac3bde694eb43469e2f377814, type: 3}
   m_Name: level1
   m_EditorClassIdentifier: 
-  Points: []
+  Points:
+  - {x: 0, y: 0}
+  - {x: 50, y: 50}
+  - {x: 100, y: 100}
+  - {x: 150, y: 150}
+  - {x: 200, y: 200}
   ConvexHull: []
