@@ -3,11 +3,11 @@ using System.Linq;
 using UnityEngine;
 
 namespace RubberBanding {
-    public class RbQuadTree {
+    public class rbQuadTree {
 
     private Node Root;
 
-    public RbQuadTree(List<rbPoint> points)
+    public rbQuadTree(List<rbPoint> points)
     {
         // Create bounding box of all points
         float left = points.Min(e => e.Pos.x);
@@ -22,10 +22,10 @@ namespace RubberBanding {
 	
     private Node Build(Node parent, List<rbPoint> points, AARect rectangle)
     {
-        Node n = new Node(parent, points.Capacity, rectangle);
+        Node n = new Node(parent, points.Count(), rectangle);
         
         // Edge case: only one point has to fit in this box
-        if (points.Capacity == 1)
+        if (points.Count() == 1)
         {
             n.point = points[0];
             return n;
@@ -35,10 +35,12 @@ namespace RubberBanding {
         List<AARect> boundingRects = rectangle.getSplit();
 
         // Recursively build tree. Note: depth first
-        List<List<rbPoint>> pointSplit = new List<List<rbPoint>>();
-        for (int i = 0; i < boundingRects.Capacity; i++)
+        for (int i = 0; i < boundingRects.Count(); i++)
         {
-            n.children.Add(Build(n, points.FindAll(p => boundingRects[i].Contains(p)), boundingRects[i]));
+            List<rbPoint> foundPoints = points.FindAll(p => boundingRects[i].Contains(p));
+            if (foundPoints.Count() > 1) {
+                n.children.Add(Build(n,  foundPoints, boundingRects[i]));
+            }
         }
 
         
@@ -51,7 +53,7 @@ namespace RubberBanding {
         Node n = Root;
         while (n.point == null)
         {
-            for (int i = 0; i < n.children.Capacity; i++)
+            for (int i = 0; i < n.children.Count(); i++)
             {
                 Node child = n.children[i];
                 if (child.boundingRect.Contains(p))

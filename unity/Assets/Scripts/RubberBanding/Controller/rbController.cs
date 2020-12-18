@@ -78,11 +78,14 @@
 		
 		// Update is called once per frame
 		void Update () {
-			Debug.Log(this.rb_chosenPoint);
-			if (rb_chosenPoint != null) {
+			
+			if (this.rb_chosenPoint != null) {
+				Debug.Log(this.rb_chosenPoint);
+				Debug.Log("Callleeeed");
 				// Delete this point
 				// RemovePoint(rb_chosenPoint);
-				
+				this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint);
+				this.rb_chosenPoint = null;
 				// Add scores and such, update hull
 
 				// Check if this move ends the game
@@ -103,9 +106,9 @@
 			if(turn == player.id) {
    				turn = opponent.id;
 			} else {
-				turn = player.id;
+				this.turn = player.id;
 			}
-			rb_chosenPoint = null;
+			this.rb_chosenPoint = null;
 		}
 
 		// Removes a point from the level
@@ -121,28 +124,24 @@
 		// Or we could check if we have a convex hull of size <= 2 ?
 		bool CheckGameOver()
 		{
-			if (this.rb_convexHull.convexHull.Count <= 2) {
-				// We should end the game here
-				return true;
-			}
-			return false;
+			return this.rb_convexHull.convexHull.Count() <= 2;
 		}
 
 		public void AddSegment(rbPoint rb_point_1, rbPoint rb_point_2)
         {
-            var segment = new rbSegment(rb_point_1.Pos, rb_point_2.Pos);
+            var segment = new rbSegment(new Util.Geometry.LineSegment(rb_point_1.Pos, rb_point_2.Pos));
 
             rb_segments.Add(segment);
 
             // instantiate new road mesh
-            var roadmesh = Instantiate(m_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+            var roadmesh = Instantiate(rb_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
             roadmesh.transform.parent = this.transform;
             instantiatedObjects.Add(roadmesh);
 
-            roadmesh.GetComponent<HullSegment>().Segment = segment;
+            // roadmesh.GetComponent<rbSegment>().segment = segment;
 
-            var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
-            roadmeshScript.CreateNewMesh(a_point1.transform.position, a_point2.transform.position);
+            //var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
+            // roadmeshScript.CreateNewMesh(rb_point_1.transform.position, rb_point_2.transform.position);
             
         }
 
