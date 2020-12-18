@@ -6,10 +6,10 @@ using System.Linq;
 
 public class rbConvexHull : MonoBehaviour {
 
-    public List<rbPoint> convexHull;
-    rbPoint pre;
-    rbPoint post;
-    rbPoint removed;
+    public List<rbPoint> convexHull = null;
+    rbPoint pre = null;
+    rbPoint post = null;
+    rbPoint removed = null;
 
     float CrossProduct(rbPoint A, rbPoint B, rbPoint C)
     {
@@ -66,21 +66,43 @@ public class rbConvexHull : MonoBehaviour {
          * return if success
          */
         int n = this.convexHull.Count;
-        for (int i = 0; i < n; i++)
+
+        if (this.convexHull[0].Equals(p))
         {
-            if (this.convexHull[i].Equals(p))
-            {
                 removed = p;
-                pre = this.convexHull[i - 1];
-                post = this.convexHull[i + 1];
-                break;
+                pre = this.convexHull[n - 1];
+                post = this.convexHull[1];
+        } else if (this.convexHull[n - 1].Equals(p))
+        {
+            removed = p;
+            pre = this.convexHull[n - 2];
+            post = this.convexHull[0];
+        } else
+        {
+            for (int i = 0; i < n; i++)
+            {
+                if (this.convexHull[i].Equals(p))
+                {
+                    removed = p;
+                    pre = this.convexHull[i - 1];
+                    post = this.convexHull[i + 1];
+                    break;
+                }
             }
         }
+   
         return this.convexHull.Remove(p);
     }
 
-    void UpdateConvexHull(){
-        
-    }
+    void UpdateConvexHull(rbPoint p){
+            RemovePoint(p);
+            AARect rect = new AARect(this.pre.Pos, this.post.Pos);
+            List<rbPoint> points = getPointsInRectangle(AARect);
+
+            points.Sort((a, b) =>
+            a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
+
+
+        }
 }
 }
