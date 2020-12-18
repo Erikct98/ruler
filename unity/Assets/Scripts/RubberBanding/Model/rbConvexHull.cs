@@ -1,10 +1,9 @@
-namespace RubberBanding
-{
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
 
-public class rbConvexHull : MonoBehaviour {
+namespace RubberBanding {
+
+public class rbConvexHull {
 
     public List<rbPoint> convexHull = null;
     rbPoint pre = null;
@@ -95,14 +94,12 @@ public class rbConvexHull : MonoBehaviour {
     }
 
     void UpdateConvexHull(rbPoint p){
-            RemovePoint(p);
-            AARect rect = new AARect(this.pre.Pos, this.post.Pos);
-            List<rbPoint> points = getPointsInRectangle(AARect);
+            // RemovePoint(p);
+            // AARect rect = new AARect(this.pre.Pos, this.post.Pos);
+            // // List<rbPoint> points = getPointsInRectangle(AARect);
 
-            points.Sort((a, b) =>
-            a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
-
-
+            // points.Sort((a, b) =>
+            // a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
         }
 }
 }

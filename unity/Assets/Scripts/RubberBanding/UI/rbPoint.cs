@@ -34,6 +34,7 @@
             // Inform the controller that this point was clicked.
             if (!Removed) {
                 rb_controller.rb_chosenPoint = this;
+                Destroy(gameObject);
             }
         }
 

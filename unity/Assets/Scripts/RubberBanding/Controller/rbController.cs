@@ -27,6 +27,8 @@
 		// List which contains all points in the current level
 		internal List<rbPoint> rb_points;
 
+		internal List<rbSegment> rb_segments;
+
 		// ID of the player whose current turn it is
 		internal int turn;
 
@@ -64,24 +66,28 @@
             // }
 
             // create point set
-            rb_points = FindObjectsOfType<rbPoint>().ToList();
-			rb_convexHull = new rbConvexHull();
+            this.rb_points = FindObjectsOfType<rbPoint>().ToList();
+			this.rb_convexHull = new rbConvexHull();
 			
             // compute convex hull
-            rb_convexHull.BuildConvexHull(rb_points);
+            this.rb_convexHull.convexHull = this.rb_convexHull.BuildConvexHull(rb_points);
+			Debug.Log(this.rb_convexHull.convexHull);
+			Debug.Log(this.rb_points);
 
 		}
 		
 		// Update is called once per frame
 		void Update () {
+			Debug.Log(this.rb_chosenPoint);
 			if (rb_chosenPoint != null) {
 				// Delete this point
-				RemovePoint(rb_chosenPoint);
+				// RemovePoint(rb_chosenPoint);
 				
 				// Add scores and such, update hull
 
 				// Check if this move ends the game
 				if(CheckGameOver()) {
+					Debug.Log("End game");
 					// Do endscreen stuff, show winner, scores
 				} else {
 					// Reset state, switch player turn state
@@ -92,6 +98,7 @@
 
 		void NextTurn()
 		{
+			Debug.Log("Next turn");
 			// @Jurrien van Winden
 			if(turn == player.id) {
    				turn = opponent.id;
@@ -108,18 +115,40 @@
 			point.Removed = true;
 
 			// Update convex hull
-			return rb_convexHull.RemovePoint(point);
+			return this.rb_convexHull.RemovePoint(point);
 		}
 		// Checks whether all points have been deleted except 2, AKA no pegs can be removed anymore and the game should end
 		// Or we could check if we have a convex hull of size <= 2 ?
 		bool CheckGameOver()
 		{
-			if (rb_convexHull.convexHull.Count <= 2) {
+			if (this.rb_convexHull.convexHull.Count <= 2) {
 				// We should end the game here
 				return true;
 			}
 			return false;
 		}
+
+		public void AddSegment(rbPoint rb_point_1, rbPoint rb_point_2)
+        {
+            var segment = new rbSegment(rb_point_1.Pos, rb_point_2.Pos);
+
+            rb_segments.Add(segment);
+
+            // instantiate new road mesh
+            var roadmesh = Instantiate(m_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+            roadmesh.transform.parent = this.transform;
+            instantiatedObjects.Add(roadmesh);
+
+            roadmesh.GetComponent<HullSegment>().Segment = segment;
+
+            var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
+            roadmeshScript.CreateNewMesh(a_point1.transform.position, a_point2.transform.position);
+            
+        }
+
+        public void RemoveSegment(rbSegment rb_segment)
+        {
+        }
 	}	
 }
 

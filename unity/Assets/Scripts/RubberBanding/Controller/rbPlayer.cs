@@ -1,9 +1,7 @@
 
 // Class to accomodate player related variables and methods.
 // @Jurrien van Winden
-using UnityEngine;
-
-public class rbPlayer : MonoBehaviour
+public class rbPlayer
 {
 
     public int id;
