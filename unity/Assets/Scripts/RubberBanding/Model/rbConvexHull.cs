@@ -18,7 +18,7 @@ public class rbConvexHull : MonoBehaviour {
 	
     public void BuildConvexHull(List<rbPoint> points)
     {
-        if (points.Count() <= 1)
+        if (points.Count <= 1)
         {
             return points;
         };

@@ -1,4 +1,4 @@
-﻿namespace Rubberbanding
+﻿namespace RubberBanding
 {
     using System.Collections.Generic;
     using System.Linq;

@@ -2,7 +2,8 @@
 using System.Linq;
 using UnityEngine;
 
-public class RbQuadTree{
+namespace RubberBanding {
+    public class RbQuadTree {
 
     private Node Root;
 
@@ -189,5 +190,7 @@ public class Node
         point = null;
     }
 }
+}
+
 
 
