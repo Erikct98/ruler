@@ -2,6 +2,7 @@ namespace RubberBanding
 {
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class rbConvexHull : MonoBehaviour {
 
@@ -10,21 +11,21 @@ public class rbConvexHull : MonoBehaviour {
     rbPoint post;
     rbPoint removed;
 
-    int CrossProduct(rbPoint A, rbPoint B, rbPoint C)
+    float CrossProduct(rbPoint A, rbPoint B, rbPoint C)
     {
         return (B.Pos.x - A.Pos.x) * (C.Pos.y - A.Pos.y) - (B.Pos.y - A.Pos.y) * (C.Pos.x - A.Pos.x);
     }
     
 	
-    public void BuildConvexHull(List<rbPoint> points)
+    public List<rbPoint> BuildConvexHull(List<rbPoint> points)
     {
         if (points.Count <= 1)
         {
             return points;
         };
 
-        int n = points.Count();
-        List hull = new List<rbPoint>(new rbPoint[n * 2]);
+        int n = points.Count;
+        List<rbPoint> hull = new List<rbPoint>(new rbPoint[n * 2]);
 
 
         //sort points from smallest to largest based on x then y
@@ -54,6 +55,8 @@ public class rbConvexHull : MonoBehaviour {
         }
 
         this.convexHull = hull.Take(k - 1).ToList();
+
+        return convexHull;
     }
 
     public bool RemovePoint(rbPoint p)
@@ -62,7 +65,7 @@ public class rbConvexHull : MonoBehaviour {
          * TODO: remove p from tree
          * return if success
          */
-        int n = this.convexHull.Count();
+        int n = this.convexHull.Count;
         for (int i = 0; i < n; i++)
         {
             if (this.convexHull[i].Equals(p))
