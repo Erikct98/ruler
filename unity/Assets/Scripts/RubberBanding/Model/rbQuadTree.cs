@@ -13,8 +13,8 @@ namespace RubberBanding {
             // Create bounding box of all points
             float left = points.Min(e => e.Pos.x);
             float right = points.Max(e => e.Pos.x) + 0.00001f;
-            float top = points.Max(e => e.Pos.y) + 0.00001f;
-            float bottom = points.Min(e => e.Pos.y);
+            float top = points.Max(e => e.Pos.y);
+            float bottom = points.Min(e => e.Pos.y) + 0.00001f;
             AARect rectangle = new AARect(top, right, bottom, left);
 
             // Build QuadTree
@@ -38,7 +38,7 @@ namespace RubberBanding {
             // Recursively build tree. Note: depth first
             for (int i = 0; i < boundingRects.Count; i++)
             {
-                var foundPoints = points.FindAll(p => boundingRects[i].Contains(p));
+                var foundPoints = points.FindAll(p => boundingRects[i].SplitContains(p));
                 if (foundPoints.Count > 1) {
                     n.children.Add(Build(n, foundPoints, boundingRects[i]));
                 }
@@ -109,9 +109,9 @@ namespace RubberBanding {
             List<rbPoint> points = new List<rbPoint>();
             foreach (QNode child in n.children)
             {
-                if (child.boundingRect.Overlaps(bound))
+                if (child.boundingRect.Intersects(bound))
                 {
-                    if (child.point != null)
+                    if (child.point != null && bound.Contains(child.point))
                     {
                         points.Add(child.point);
                     }

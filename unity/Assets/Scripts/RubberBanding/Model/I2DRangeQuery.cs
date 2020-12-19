@@ -37,17 +37,27 @@ namespace RubberBanding {
             Bottom = br.y;
         }
 
+        /// <summary>
+        /// Boundary inclusive contain
+        /// </summary>
         public bool Contains(rbPoint p)
         {
-            // NOTE: top and left inclusive, bottom and right exclusive.
+            return Left <= p.Pos.x && p.Pos.x <= Right && Bottom <= p.Pos.y && p.Pos.y <= Top;
+        }
+
+        /// <summary>
+        /// Top and left inclusive, bottom and right exclusive.
+        /// </summary>
+        public bool SplitContains(rbPoint p)
+        {            
             return Left <= p.Pos.x && p.Pos.x < Right && Bottom < p.Pos.y && p.Pos.y <= Top;
         }
 
-        public bool Overlaps(AARect o)
+        public bool Intersects(AARect o)
         {
             // TODO: I am not 100% sure about this formula.
-            bool LR = Left < o.Right && o.Left < Right;
-            bool TB = Bottom < o.Top && o.Bottom < Top;
+            bool LR = Left <= o.Right && o.Left <= Right;
+            bool TB = Bottom <= o.Top && o.Bottom <= Top;
             return LR && TB;
         }
 
