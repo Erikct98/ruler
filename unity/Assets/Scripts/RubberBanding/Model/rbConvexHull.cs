@@ -103,60 +103,60 @@ namespace RubberBanding {
         public int UpdateConvexHull(rbPoint p) {
             Debug.Log( "Before remove point");
             Debug.Log(p);
-            // RemovePoint(p);
-            // AARect rect = new AARect(this.pre.Pos, this.post.Pos);
-            // List<rbPoint> points = this.RangeQuery.FindInRange(rect);
+            RemovePoint(p);
+            AARect rect = new AARect(this.pre.Pos, this.post.Pos);
+            List<rbPoint> points = this.RangeQuery.FindInRange(rect);
 
-            // points.Sort((a, b) =>
-            // a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
+            points.Sort((a, b) =>
+            a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
 
-            // int n = points.Count();
-            // List<rbPoint> patch = new List<rbPoint>(new rbPoint[n]);
+            int n = points.Count();
+            List<rbPoint> patch = new List<rbPoint>(new rbPoint[n]);
             
-            // int k = 0;
-            // if (CrossProduct(points[0], this.removed, points[n - 1]) == 0)
-            // {
-            //     return 0;
-            // } else if (CrossProduct(points[0], this.removed, points[n - 1]) > 0)
-            // {
-            //     k = 0;
-            //     for (int i = 0; i < n; i++)
-            //     {
-            //         while (k >= 2 && CrossProduct(patch[k - 2], patch[k - 1], points[i]) <= 0)
-            //         {
-            //             k--;
-            //         }
-            //         patch[k++] = points[i];
-            //     }
-            // } else if (CrossProduct(points[0], this.removed, points[n - 1]) < 0)
-            // {
-            //     k = 0;
-            //     for (int i = n - 1; i >= 0; i--)
-            //     {
-            //         while (k >= 2 && CrossProduct(patch[k - 2], patch[k - 1], points[i]) <= 0)
-            //         {
-            //             k--;
-            //         }
-            //         patch[k++] = points[i];
-            //     }
-            // }
+            int k = 0;
+            if (CrossProduct(points[0], this.removed, points[n - 1]) == 0)
+            {
+                return 0;
+            } else if (CrossProduct(points[0], this.removed, points[n - 1]) > 0)
+            {
+                k = 0;
+                for (int i = 0; i < n; i++)
+                {
+                    while (k >= 2 && CrossProduct(patch[k - 2], patch[k - 1], points[i]) <= 0)
+                    {
+                        k--;
+                    }
+                    patch[k++] = points[i];
+                }
+            } else if (CrossProduct(points[0], this.removed, points[n - 1]) < 0)
+            {
+                k = 0;
+                for (int i = n - 1; i >= 0; i--)
+                {
+                    while (k >= 2 && CrossProduct(patch[k - 2], patch[k - 1], points[i]) <= 0)
+                    {
+                        k--;
+                    }
+                    patch[k++] = points[i];
+                }
+            }
 
-            // patch = patch.Take(k).ToList();
-            // n = patch.Count();
+            patch = patch.Take(k).ToList();
+            n = patch.Count();
 
-            // int index = this.convexHull.IndexOf(patch[n - 1]);
+            int index = this.convexHull.IndexOf(patch[n - 1]);
 
-            // for (int i = n - 2; i > 0; i--)
-            // {
-            //     this.convexHull.Insert(index, patch[i]);
-            // }
+            for (int i = n - 2; i > 0; i--)
+            {
+                this.convexHull.Insert(index, patch[i]);
+            }
 
-            // int score = 0;
-            // for (int i = 0; i < n - 1; i++)
-            // {
-            //     score += (int) (patch[i].Pos.x * (patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x * (this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x * (patch[i].Pos.y - patch[i + 1].Pos.y));
-            // }
-            return 0;
+            int score = 0;
+            for (int i = 0; i < n - 1; i++)
+            {
+                score += (int) (patch[i].Pos.x * (patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x * (this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x * (patch[i].Pos.y - patch[i + 1].Pos.y));
+            }
+            return score;
         }
     }
 }

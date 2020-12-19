@@ -2,6 +2,8 @@
 	using System.Collections.Generic;
 	using UnityEngine;
     using System.Linq;
+	using Util.Geometry;
+	using General.Model;
 
 	public class rbController : MonoBehaviour {
 
@@ -27,7 +29,7 @@
 		// List which contains all points in the current level
 		internal List<rbPoint> rb_points;
 
-		internal List<rbSegment> rb_segments;
+		internal List<LineSegment> rb_segments;
 
 		// ID of the player whose current turn it is
 		internal int turn;
@@ -67,10 +69,13 @@
 
             // create point set
             this.rb_points = FindObjectsOfType<rbPoint>().ToList();
+			this.rb_segments = new List<LineSegment>();
 			this.rb_convexHull = new rbConvexHull();
 			
             // compute convex hull
             this.rb_convexHull.convexHull = this.rb_convexHull.BuildConvexHull(rb_points);
+			// Draws the currently stored convex hull
+			DrawConvexHull();
 			Debug.Log(this.rb_convexHull.convexHull);
 			Debug.Log(this.rb_points);
 
@@ -82,10 +87,14 @@
 			if (this.rb_chosenPoint != null) {
 				Debug.Log(this.rb_chosenPoint);
 				Debug.Log("Callleeeed");
+
 				// Delete this point
-				// RemovePoint(rb_chosenPoint);
 				this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint);
 				this.rb_chosenPoint = null;
+
+				// Redraw the hull
+				DrawConvexHull();
+
 				// Add scores and such, update hull
 
 				// Check if this move ends the game
@@ -127,27 +136,52 @@
 			return this.rb_convexHull.convexHull.Count() <= 2;
 		}
 
+		public void DrawConvexHull() {
+			ClearConvexHullDrawing();
+			rbPoint prev = null;
+			rb_convexHull.convexHull.ForEach((point) => {
+				if (prev != null) {
+					AddSegment(prev, point);
+				}
+				prev = point;
+			});
+			// Add line segment between first and last element as well
+			AddSegment(rb_convexHull.convexHull[0], rb_convexHull.convexHull[rb_convexHull.convexHull.Count - 1]);
+		}
+
 		public void AddSegment(rbPoint rb_point_1, rbPoint rb_point_2)
         {
-            var segment = new rbSegment(new Util.Geometry.LineSegment(rb_point_1.Pos, rb_point_2.Pos));
+
+			var segment = new Util.Geometry.LineSegment(rb_point_1.Pos, rb_point_2.Pos);
 
             rb_segments.Add(segment);
 
             // instantiate new road mesh
-            var roadmesh = Instantiate(rb_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
-            roadmesh.transform.parent = this.transform;
-            instantiatedObjects.Add(roadmesh);
+            var mesh = Instantiate(rb_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+            mesh.transform.parent = this.transform;
+            instantiatedObjects.Add(mesh);
 
-            // roadmesh.GetComponent<rbSegment>().segment = segment;
+            mesh.GetComponent<rbSegment>().segment = segment;
 
-            //var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
-            // roadmeshScript.CreateNewMesh(rb_point_1.transform.position, rb_point_2.transform.position);
+            var meshScript = mesh.GetComponent<ReshapingMesh>();
+            meshScript.CreateNewMesh(rb_point_1.transform.position, rb_point_2.transform.position);
             
         }
 
         public void RemoveSegment(rbSegment rb_segment)
         {
+			rb_segments.Remove(rb_segment.segment);
+			// Dunno if needed?
+			Destroy(gameObject);
         }
+
+		public void ClearConvexHullDrawing()
+		{
+			rb_segments.ForEach(segment => {
+				Destroy(gameObject);
+			});
+			rb_segments = new List<LineSegment>();
+		}
 	}	
 }
 
