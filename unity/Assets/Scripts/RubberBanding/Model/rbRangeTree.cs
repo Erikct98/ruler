@@ -79,12 +79,13 @@
                 {
                     split = split.Right;
                 }
-                if (rightBound < x)
+                else if (rightBound < x)
                 {
                     split = split.Left;
-                }                
+                }
+                else break;
             }
-            if (split.Point != null)
+            if (split != null && split.Point != null)
             {
                 points.Add(split.Point);
             }
