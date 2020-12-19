@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class BST<T> : IBST<T>
         where T : IComparable<T>, IEquatable<T>
@@ -20,7 +21,9 @@
         {
             Root = null;
 
-            elements.Sort(delegate (T e1, T e2) { e1.CompareTo(e2) });
+            // elements.Sort(
+            //     delegate (T e1, T e2) { return e1.CompareTo(e2); }
+            // );
         }
 
         public void Clear()
@@ -83,6 +86,7 @@
             public Node Right { get; set; }
 
             public T Data { get; set; }
+            public int Level { get; set; }
 
             public Node(T a_Data, Node a_Left, Node a_Right, int a_Level)
             {
