@@ -137,9 +137,10 @@
 		}
 
 		public void DrawConvexHull() {
-			ClearConvexHullDrawing();
+			// ClearConvexHullDrawing();
 			rbPoint prev = null;
 			rb_convexHull.convexHull.ForEach((point) => {
+				Debug.Log(point);
 				if (prev != null) {
 					AddSegment(prev, point);
 				}
@@ -180,7 +181,7 @@
 			rb_segments.ForEach(segment => {
 				Destroy(gameObject);
 			});
-			rb_segments = new List<LineSegment>();
+			// rb_segments = new List<LineSegment>();
 		}
 	}	
 }

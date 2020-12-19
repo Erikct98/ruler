@@ -106,6 +106,9 @@ namespace RubberBanding {
             RemovePoint(p);
             AARect rect = new AARect(this.pre.Pos, this.post.Pos);
             List<rbPoint> points = this.RangeQuery.FindInRange(rect);
+            Debug.Log("RangeQuery points");
+            Debug.Log(points);
+
             points.Add(this.pre);
             points.Add(this.post);
 
