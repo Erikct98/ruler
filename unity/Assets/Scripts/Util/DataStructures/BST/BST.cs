@@ -21,7 +21,7 @@
         {
             Root = null;
 
-            // elements.Sort(
+            // elements.OrderBy(
             //     delegate (T e1, T e2) { return e1.CompareTo(e2); }
             // );
         }

@@ -23,10 +23,10 @@ namespace RubberBanding {
 
         private QNode Build(QNode parent, List<rbPoint> points, AARect rectangle)
         {
-            QNode n = new QNode(parent, points.Capacity, rectangle);
+            QNode n = new QNode(parent, points.Count, rectangle);
 
             // Edge case: only one point has to fit in this box
-            if (points.Capacity == 1)
+            if (points.Count == 1)
             {
                 n.point = points[0];
                 return n;
@@ -36,9 +36,12 @@ namespace RubberBanding {
             List<AARect> boundingRects = rectangle.Split();
 
             // Recursively build tree. Note: depth first
-            for (int i = 0; i < boundingRects.Capacity; i++)
+            for (int i = 0; i < boundingRects.Count; i++)
             {
-                n.children.Add(Build(n, points.FindAll(p => boundingRects[i].Contains(p)), boundingRects[i]));
+                var foundPoints = points.FindAll(p => boundingRects[i].Contains(p));
+                if (foundPoints.Count > 1) {
+                    n.children.Add(Build(n, foundPoints, boundingRects[i]));
+                }
             }
 
 
