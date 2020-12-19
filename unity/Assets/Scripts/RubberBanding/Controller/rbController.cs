@@ -87,11 +87,13 @@
 			if (this.rb_chosenPoint != null) {
 				Debug.Log(this.rb_chosenPoint);
 				Debug.Log("Callleeeed");
+
 				// Delete this point
-				// RemovePoint(rb_chosenPoint);
 				this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint);
 				this.rb_chosenPoint = null;
+
 				// Redraw the hull
+				DrawConvexHull();
 
 				// Add scores and such, update hull
 
@@ -135,6 +137,7 @@
 		}
 
 		public void DrawConvexHull() {
+			ClearConvexHullDrawing();
 			rbPoint prev = null;
 			rb_convexHull.convexHull.ForEach((point) => {
 				if (prev != null) {
@@ -154,14 +157,14 @@
             rb_segments.Add(segment);
 
             // instantiate new road mesh
-            var roadmesh = Instantiate(rb_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
-            roadmesh.transform.parent = this.transform;
-            instantiatedObjects.Add(roadmesh);
+            var mesh = Instantiate(rb_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+            mesh.transform.parent = this.transform;
+            instantiatedObjects.Add(mesh);
 
-            roadmesh.GetComponent<rbSegment>().segment = segment;
+            mesh.GetComponent<rbSegment>().segment = segment;
 
-            var roadmeshScript = roadmesh.GetComponent<ReshapingMesh>();
-            roadmeshScript.CreateNewMesh(rb_point_1.transform.position, rb_point_2.transform.position);
+            var meshScript = mesh.GetComponent<ReshapingMesh>();
+            meshScript.CreateNewMesh(rb_point_1.transform.position, rb_point_2.transform.position);
             
         }
 
@@ -171,6 +174,14 @@
 			// Dunno if needed?
 			Destroy(gameObject);
         }
+
+		public void ClearConvexHullDrawing()
+		{
+			rb_segments.ForEach(segment => {
+				Destroy(gameObject);
+			});
+			rb_segments = new List<LineSegment>();
+		}
 	}	
 }
 
