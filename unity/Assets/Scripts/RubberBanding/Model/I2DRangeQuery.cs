@@ -42,7 +42,7 @@ namespace RubberBanding {
         /// </summary>
         public bool Contains(rbPoint p)
         {
-            return Left <= p.Pos.x && p.Pos.x <= Right && Bottom <= p.Pos.y && p.Pos.y <= Top;
+            return Left < p.Pos.x && p.Pos.x < Right && Bottom <= p.Pos.y && p.Pos.y <= Top;
         }
 
         /// <summary>

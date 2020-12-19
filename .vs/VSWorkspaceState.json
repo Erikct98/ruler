@@ -9,6 +9,6 @@
     "\\unity\\Assets\\Scripts\\RubberBanding\\Model",
     "\\unity\\Assets\\Scripts\\RubberBanding\\UI"
   ],
-  "SelectedNode": "\\unity\\Assets\\Scripts\\RubberBanding\\Controller\\rbAI.cs",
+  "SelectedNode": "\\unity\\Assets\\Scripts\\RubberBanding\\Model\\rbQuadTree.cs",
   "PreviewInSolutionExplorer": false
 }

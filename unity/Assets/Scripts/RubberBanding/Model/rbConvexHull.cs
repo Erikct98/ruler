@@ -83,7 +83,7 @@ namespace RubberBanding {
                 // this.RangeQuery.RemovePoint(p);//remove if switching to range tree
             } else
             {
-                for (int i = 0; i < n; i++)
+                for (int i = 1; i < n - 1; i++)
                 {
                     if (this.convexHull[i].Equals(p))
                     {
@@ -106,13 +106,15 @@ namespace RubberBanding {
             RemovePoint(p);
             AARect rect = new AARect(this.pre.Pos, this.post.Pos);
             List<rbPoint> points = this.RangeQuery.FindInRange(rect);
+            points.Add(this.pre);
+            points.Add(this.post);
 
             points.Sort((a, b) =>
             a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
 
             int n = points.Count();
             List<rbPoint> patch = new List<rbPoint>(new rbPoint[n]);
-            
+
             int k = 0;
             if (CrossProduct(points[0], this.removed, points[n - 1]) == 0)
             {
