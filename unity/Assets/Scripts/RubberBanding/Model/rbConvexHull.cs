@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RubberBanding {
     public class rbConvexHull {
-        RbQuadTree quad = null;
+        I2DRangeQuery<rbPoint> RangeQuery = null;
         public List<rbPoint> convexHull = null;
         rbPoint pre = null;
         rbPoint post = null;
@@ -18,7 +18,8 @@ namespace RubberBanding {
         
         public List<rbPoint> BuildConvexHull(List<rbPoint> points)
         {
-            quad = new RbQuadTree(points);
+            RangeQuery = new RbQuadTree(points);
+            //RangeQuery = new RbRangeTree(points);
             
             if (points.Count() <= 1)
             {
@@ -73,13 +74,13 @@ namespace RubberBanding {
                 this.removed = p;
                 this.pre = this.convexHull[n - 1];
                 this.post = this.convexHull[1];
-                // this.quad.RemovePoint(p);//remove if switching to range tree
+                // this.RangeQuery.RemovePoint(p);//remove if switching to range tree
             } else if (this.convexHull[n - 1].Equals(p))
             {
                 this.removed = p;
                 this.pre = this.convexHull[n - 2];
                 this.post = this.convexHull[0];
-                // this.quad.RemovePoint(p);//remove if switching to range tree
+                // this.RangeQuery.RemovePoint(p);//remove if switching to range tree
             } else
             {
                 for (int i = 0; i < n; i++)
@@ -89,7 +90,7 @@ namespace RubberBanding {
                         this.removed = p;
                         this.pre = this.convexHull[i - 1];
                         this.post = this.convexHull[i + 1];
-                        // this.quad.RemovePoint(p);//remove if switching to range tree
+                        // this.RangeQuery.RemovePoint(p);//remove if switching to range tree
                         break;
                     }
                 }
@@ -104,7 +105,7 @@ namespace RubberBanding {
             Debug.Log(p);
             RemovePoint(p);
             AARect rect = new AARect(this.pre.Pos, this.post.Pos);
-            List<rbPoint> points = this.quad.FindInRange(rect);
+            List<rbPoint> points = this.RangeQuery.FindInRange(rect);
 
             points.Sort((a, b) =>
             a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
