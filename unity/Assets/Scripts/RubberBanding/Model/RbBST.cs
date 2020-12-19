@@ -5,7 +5,7 @@
 
     public class RbBST
     {
-        private Node Root { get; set; }
+        private BstNode Root { get; set; }
 
         /// <param name="points">List of all rbPoints that should be put in the tree. 
         /// It is assumed that these are sorted on y-coordinate.</param>
@@ -17,12 +17,12 @@
         /// <summary>
         /// Build the Binary Search Tree
         /// </summary>
-        private Node Build(IEnumerable<rbPoint> points)
+        private BstNode Build(IEnumerable<rbPoint> points)
         {
             int count = points.Count();
             if (count == 0) return null;
 
-            Node root = new Node();
+            BstNode root = new BstNode();
             int medianIdx = count / 2;
             root.Point = points.ElementAt(medianIdx);
 
@@ -37,7 +37,7 @@
             List<rbPoint> points = new List<rbPoint>();
 
             // Look for split node
-            Node split = Root;
+            BstNode split = Root;
             while (split != null)
             {
                 float y = split.Point.Pos.y;
@@ -52,7 +52,7 @@
             }
 
             // Search left subtree
-            Node elt = split;
+            BstNode elt = split;
             while (elt != null)
             {
                 float y = elt.Point.Pos.y;
@@ -96,11 +96,14 @@
             return points.FindAll(e => !e.Removed);
         }
 
-        private class Node
+        /// <summary>
+        /// Node used in the creation of RbBST.
+        /// </summary>
+        private class BstNode
         {
             public rbPoint Point { get; set; }
-            public Node Left { get; set; }
-            public Node Right { get; set; }
+            public BstNode Left { get; set; }
+            public BstNode Right { get; set; }
 
             /// <summary>
             /// Returns all elements contained in this subtree.

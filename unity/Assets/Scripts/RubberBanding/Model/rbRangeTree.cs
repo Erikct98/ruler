@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class RbRangeTree
+    public class RbRangeTree : I2DRangeQuery<rbPoint>
     {
         private readonly RTNode Root;
 
@@ -62,12 +62,13 @@
         /// <param name="topLeft">Top left corner of axis-aligned query rectangle</param>
         /// <param name="bottomRight">Bottom right corner of axis-aligned query rectangle</param>
         /// <returns>All points in this tree that lie inside indicated axis-aligned query rectangle</returns>
-        public List<rbPoint> FindInRange(rbPoint topLeft, rbPoint bottomRight)
+        override
+        public List<rbPoint> FindInRange(AARect range)
         {
             List<rbPoint> points = new List<rbPoint>();
 
-            float leftBound = topLeft.Pos.x;
-            float rightBound = bottomRight.Pos.y;
+            float leftBound = range.Left;
+            float rightBound = range.Right;
 
             // Find split node
             RTNode split = Root;
@@ -98,7 +99,7 @@
                     points.Add(elt.Point);
                     if (elt.Right != null)
                     {
-                        points.AddRange(elt.Right.Ads.FindInRange(bottomRight.Pos.y, topLeft.Pos.y));
+                        points.AddRange(elt.Right.Ads.FindInRange(range.Bottom, range.Top));
                     }
                     elt = elt.Left;
                 }
@@ -118,7 +119,7 @@
                     points.Add(elt.Point);
                     if (elt.Left != null)
                     {
-                        points.AddRange(elt.Left.Ads.FindInRange(bottomRight.Pos.y, topLeft.Pos.y));
+                        points.AddRange(elt.Left.Ads.FindInRange(range.Bottom, range.Top));
                     }
                     elt = elt.Right;
                 }
@@ -129,8 +130,17 @@
             }
             return points;
         }
+
+        override
+        public void RemovePoint(rbPoint point)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
+    /// <summary>
+    /// Node used in the creation of rbRangeTree
+    /// </summary>
     public class RTNode
     {
         public RTNode Left { get; set; }

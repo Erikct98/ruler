@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-	using UnityEngine;
+using UnityEngine;
 
 namespace RubberBanding {
     public class rbConvexHull {
-        rbQuadTree quad = null;
+        RbQuadTree quad = null;
         public List<rbPoint> convexHull = null;
         rbPoint pre = null;
         rbPoint post = null;
@@ -18,7 +18,7 @@ namespace RubberBanding {
         
         public List<rbPoint> BuildConvexHull(List<rbPoint> points)
         {
-            quad = new rbQuadTree(points);
+            quad = new RbQuadTree(points);
             
             if (points.Count() <= 1)
             {
@@ -104,7 +104,7 @@ namespace RubberBanding {
             Debug.Log(p);
             RemovePoint(p);
             AARect rect = new AARect(this.pre.Pos, this.post.Pos);
-            List<rbPoint> points = this.quad.getPointsInRectangle(rect);
+            List<rbPoint> points = this.quad.FindInRange(rect);
 
             points.Sort((a, b) =>
             a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
@@ -156,7 +156,6 @@ namespace RubberBanding {
                 score += (int) (patch[i].Pos.x * (patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x * (this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x * (patch[i].Pos.y - patch[i + 1].Pos.y));
             }
             return score;
-            return 0;
         }
     }
 }
