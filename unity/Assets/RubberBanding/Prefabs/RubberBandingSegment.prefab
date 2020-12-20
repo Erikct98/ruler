@@ -106,8 +106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54c0e3784c032eb4fa0d8e1f93343a88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  repeatDistance: 5
-  widthmodifier: 0.3
+  repeatDistance: 10
+  widthmodifier: 1.2
 --- !u!114 &6398285000266184531
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -69,6 +69,8 @@
 
             // create point set
             this.rb_points = FindObjectsOfType<rbPoint>().ToList();
+			Debug.Log(this.rb_points.Count());
+
 			this.rb_segments = new List<LineSegment>();
 			this.rb_convexHull = new rbConvexHull();
 			
@@ -76,33 +78,29 @@
             this.rb_convexHull.convexHull = this.rb_convexHull.BuildConvexHull(rb_points);
 			// Draws the currently stored convex hull
 			DrawConvexHull();
-			Debug.Log(this.rb_convexHull.convexHull);
-			Debug.Log(this.rb_points);
-
 		}
 		
 		// Update is called once per frame
 		void Update () {
 			
 			if (this.rb_chosenPoint != null) {
-				Debug.Log(this.rb_chosenPoint);
-				Debug.Log("Callleeeed");
+				// Delete this point, recompute hull, compute score
+				int score = this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint);
+				UpdateScore(score);
 
-				// Delete this point
-				this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint);
+				// Reset chosen point
 				this.rb_chosenPoint = null;
 
-				// Redraw the hull
+				// Redraw the updated hull
 				DrawConvexHull();
-
-				// Add scores and such, update hull
 
 				// Check if this move ends the game
 				if(CheckGameOver()) {
 					Debug.Log("End game");
+					// SceneManager.LoadScene(m_victoryScene);
 					// Do endscreen stuff, show winner, scores
 				} else {
-					// Reset state, switch player turn state
+					// Switch player turn state
 					NextTurn();
 				}
 			}
@@ -117,23 +115,22 @@
 			} else {
 				this.turn = player.id;
 			}
-			this.rb_chosenPoint = null;
 		}
 
-		// Removes a point from the level
-		bool RemovePoint(rbPoint point)
-		{
-			// @Jurrien van Winden
-			point.Removed = true;
-
-			// Update convex hull
-			return this.rb_convexHull.RemovePoint(point);
-		}
 		// Checks whether all points have been deleted except 2, AKA no pegs can be removed anymore and the game should end
 		// Or we could check if we have a convex hull of size <= 2 ?
 		bool CheckGameOver()
 		{
 			return this.rb_convexHull.convexHull.Count() <= 2;
+		}
+
+		// Adds the score value to the score of the player whose turn it is
+		public void UpdateScore(int score) {
+			if(turn == player.id) {
+   				player.score += score;
+			} else {
+				opponent.score += score;
+			}
 		}
 
 		public void DrawConvexHull() {
