@@ -137,7 +137,7 @@
 		}
 
 		public void DrawConvexHull() {
-			// ClearConvexHullDrawing();
+			ClearConvexHullDrawing();
 			rbPoint prev = null;
 			rb_convexHull.convexHull.ForEach((point) => {
 				Debug.Log(point);
@@ -160,6 +160,7 @@
             // instantiate new road mesh
             var mesh = Instantiate(rb_roadMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
             mesh.transform.parent = this.transform;
+			mesh.tag = "Segment";
             instantiatedObjects.Add(mesh);
 
             mesh.GetComponent<rbSegment>().segment = segment;
@@ -177,11 +178,16 @@
         }
 
 		public void ClearConvexHullDrawing()
-		{
-			rb_segments.ForEach(segment => {
-				Destroy(gameObject);
-			});
-			// rb_segments = new List<LineSegment>();
+		{	
+			rb_segments.Clear();
+			// destroy line segments in level
+            foreach (var obj in instantiatedObjects)
+            {
+				if (obj != null && obj.tag == "Segment") {
+					// Must be immediate as the controller starts adding objects afterwards
+                	DestroyImmediate(obj);
+				}
+            }
 		}
 	}	
 }
