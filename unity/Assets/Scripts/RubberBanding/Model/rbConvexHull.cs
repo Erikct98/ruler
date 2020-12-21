@@ -101,16 +101,20 @@ namespace RubberBanding {
         }
 
         public int UpdateConvexHull(rbPoint p) {
-            Debug.Log( "Before remove point");
-            Debug.Log(p);
             RemovePoint(p);
-            AARect rect = new AARect(this.pre.Pos, this.post.Pos);
+            List<rbPoint> queryPoints = new List<rbPoint>();
+            queryPoints.Add(this.pre);
+            queryPoints.Add(this.post);
+            queryPoints.Add(p);
+
+            AARect rect = AARect.GetBoundingRectangle(queryPoints);
             List<rbPoint> points = this.RangeQuery.FindInRange(rect);
             Debug.Log("RangeQuery points");
-            Debug.Log(points);
+            Debug.Log(points.Count());
 
             points.Add(this.pre);
             points.Add(this.post);
+            points.Remove(p);
 
             points.Sort((a, b) =>
             a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
