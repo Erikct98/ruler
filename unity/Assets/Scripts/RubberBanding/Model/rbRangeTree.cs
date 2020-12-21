@@ -29,29 +29,37 @@
         /// <returns>The root of the 2D range tree</returns>
         private RTNode Build(List<rbPoint> xSorted, List<rbPoint> ySorted)
         {
-            if (xSorted.Capacity == 0) return null;
-
-            // Build BST on y-coordinates of points
+            // Create node
             RTNode v = new RTNode();
+
+            // Create ADS
             v.Ads = new RbBST(ySorted);
 
-            // Determine x-median point in the set
-            int medIdx = xSorted.Capacity / 2;
-            rbPoint med = xSorted[medIdx];
-            v.Point = med;
+            if (ySorted.Count == 1)
+            {
+                // Leaf node
+                v.Point = ySorted[0];
+            }
+            else
+            {
+                // Determine x_mid
+                int medIdx = xSorted.Capacity / 2;
+                rbPoint x_mid = xSorted[medIdx];
 
-            // Split xSorted on median
-            List<rbPoint> xSortedLeft = new List<rbPoint>(xSorted.Take(medIdx));
-            List<rbPoint> xSortedRight = new List<rbPoint>(xSorted.Skip(medIdx + 1)); // Skipping the median
+                // Store point in this node
+                v.Point = x_mid;
 
-            // Split ySorted on median
-            ySorted.Remove(med);
-            List<rbPoint> ySortedLeft = ySorted.FindAll(p => p.Pos.x <= med.Pos.x); // WARNING: it is assumed this function preserves order.
-            List<rbPoint> ySortedRight = ySorted.FindAll(p => p.Pos.x > med.Pos.x);
+                // Recursive build left subtree
+                List<rbPoint> xSortedLeft = new List<rbPoint>(xSorted.Take(medIdx)); // Observe: excludes median
+                ySorted.Remove(x_mid);
+                List<rbPoint> ySortedLeft = ySorted.FindAll(p => p.Pos.x <= x_mid.Pos.x); // WARNING: it is assumed this function preserves order.
+                v.Left = Build(xSortedLeft, ySortedLeft);
 
-            // Recurse
-            v.Left = Build(xSortedLeft, ySortedLeft);
-            v.Right = Build(xSortedRight, ySortedRight);
+                // Recursively build right subtree
+                List<rbPoint> xSortedRight = new List<rbPoint>(xSorted.Skip(medIdx + 1)); // Observe: skip the median
+                List<rbPoint> ySortedRight = ySorted.FindAll(p => p.Pos.x > x_mid.Pos.x);
+                v.Right = Build(xSortedRight, ySortedRight);
+            }
 
             return v;
         }
@@ -63,70 +71,84 @@
         /// <param name="bottomRight">Bottom right corner of axis-aligned query rectangle</param>
         /// <returns>All points in this tree that lie inside indicated axis-aligned query rectangle</returns>
         override
-        public List<rbPoint> FindInRange(AARect range)
+        public List<rbPoint> FindInRange(AARect range2D)
         {
             List<rbPoint> points = new List<rbPoint>();
 
-            float leftBound = range.Left;
-            float rightBound = range.Right;
+            float leftBound = range2D.Left;
+            float rightBound = range2D.Right;
 
             // Find split node
-            RTNode split = Root;
-            while (split != null)
+            RTNode v_split = Root;
+            while (v_split != null)
             {
-                float x = split.Point.Pos.x;
+                float x = v_split.Point.Pos.x;
                 if (x < leftBound)
                 {
-                    split = split.Right;
+                    v_split = v_split.Right;
                 }
                 else if (rightBound < x)
                 {
-                    split = split.Left;
+                    v_split = v_split.Left;
                 }
                 else break;
             }
-            if (split != null && split.Point != null)
-            {
-                points.Add(split.Point);
-            }
 
-            // Walk through left subtree
-            RTNode elt = split;
-            while (elt != null)
+            if (v_split == null)
             {
-                float x = elt.Point.Pos.x;
-                if (leftBound <= x)
-                {
-                    points.Add(elt.Point);
-                    if (elt.Right != null)
-                    {
-                        points.AddRange(elt.Right.Ads.FindInRange(range.Bottom, range.Top));
-                    }
-                    elt = elt.Left;
-                }
-                else
-                {
-                    elt = elt.Right;
-                }
+                return points; // Returning and empty list.
             }
-
-            // Walk through right subtree
-            elt = split;
-            while (elt != null)
+            else if (v_split.Left == null || v_split.Right == null)
             {
-                float x = elt.Point.Pos.x;
-                if (x <= rightBound)
+                // v_split is a leaf node
+                float x = v_split.Point.Pos.x;
+                if (leftBound <= x && x <= rightBound)
                 {
-                    points.Add(elt.Point);
-                    if (elt.Left != null)
+                    points.Add(v_split.Point);
+                }                
+            }
+            else
+            {
+                // Walk through left subtree
+                RTNode v = v_split.Left;
+                while (v != null && (v.Left != null || v.Right != null))
+                {
+                    // v is not a leaf
+                    float x = v.Point.Pos.x;
+                    if (leftBound <= x)
                     {
-                        points.AddRange(elt.Left.Ads.FindInRange(range.Bottom, range.Top));
+                        if (v.Right != null)
+                        {
+                            points.AddRange(v.Right.Ads.FindInRange(range2D.Bottom, range2D.Top));
+                        }                        
+                        v = v.Left;
                     }
-                    elt = elt.Right;
+                    else
+                    {
+                        v = v.Right;
+                    }
                 }
-                else
+
+                // Check point at end
+
+                // Walk through right subtree
+                v = v_split.Right;
+                while (v != null && (v.Left != null || v.Right != null))
                 {
-                    elt = elt.Left;
+                    // v is not a leaf
+                    float x = v.Point.Pos.x;
+                    if (x <= rightBound)
+                    {
+                        if (v.Left != null)
+                        {
+                            points.AddRange(v.Left.Ads.FindInRange(range2D.Bottom, range2D.Top));
+                        }                        
+                        v = v.Right;
+                    }
+                    else
+                    {
+                        v = v.Left;
+                    }
                 }
             }
             return points;
