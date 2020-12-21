@@ -6,7 +6,7 @@ namespace RubberBanding {
 
     public class RbQuadTree : I2DRangeQuery<rbPoint> {
 
-        private QNode Root;
+        private readonly QNode Root;
 
         public RbQuadTree(List<rbPoint> points)
         {
@@ -18,7 +18,7 @@ namespace RubberBanding {
             AARect rectangle = new AARect(top, right, bottom, left);
 
             // Build QuadTree
-            this.Root = Build(null, points, rectangle);
+            Root = Build(null, points, rectangle);
         }
 
         private QNode Build(QNode parent, List<rbPoint> points, AARect rectangle)
@@ -28,22 +28,23 @@ namespace RubberBanding {
             // Edge case: only one point has to fit in this box
             if (points.Count == 1)
             {
-                n.point = points[0];
-                return n;
+                n.point = points[0]; // Only leafs are assigned a point.
             }
-
-            // Split bounding rectangle into four pieces
-            List<AARect> boundingRects = rectangle.Split();
-
-            // Recursively build tree. Note: depth first
-            for (int i = 0; i < boundingRects.Count; i++)
+            else
             {
-                var foundPoints = points.FindAll(p => boundingRects[i].SplitContains(p));
-                if (foundPoints.Count > 1) {
-                    n.children.Add(Build(n, foundPoints, boundingRects[i]));
+                // Split bounding rectangle into four pieces
+                List<AARect> boundingRects = rectangle.Split();
+
+                // Recursively build tree. Note: depth first
+                for (int i = 0; i < boundingRects.Count; i++)
+                {
+                    var foundPoints = points.FindAll(p => boundingRects[i].SplitContains(p));
+                    if (foundPoints.Count > 0)
+                    {
+                        n.children.Add(Build(n, foundPoints, boundingRects[i]));
+                    }
                 }
             }
-
 
             return n;
         }
@@ -55,7 +56,7 @@ namespace RubberBanding {
             QNode n = Root;
             while (n.point == null)
             {
-                for (int i = 0; i < n.children.Capacity; i++)
+                for (int i = 0; i < n.children.Count; i++)
                 {
                     QNode child = n.children[i];
                     if (child.boundingRect.Contains(p))
@@ -107,20 +108,20 @@ namespace RubberBanding {
         private List<rbPoint> FindInRange(QNode n, AARect bound)
         {
             List<rbPoint> points = new List<rbPoint>();
-            foreach (QNode child in n.children)
+            if (n.point != null && bound.Contains(n.point))
             {
-                if (child.boundingRect.Intersects(bound))
+                // Leaf node
+                points.Add(n.point);
+            }
+            else
+            {
+                // Internal node in tree
+                foreach (QNode child in n.children)
                 {
-                    if (child.point != null && bound.Contains(child.point))
-                    {
-                        points.Add(child.point);
-                    }
-                    else
-                    {
-                        points.AddRange(FindInRange(child, bound));
-                    }
+                    points.AddRange(FindInRange(child, bound));
                 }
             }
+
             return points;
         }
 
