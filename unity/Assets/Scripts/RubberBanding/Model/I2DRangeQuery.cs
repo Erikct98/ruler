@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RubberBanding { 
@@ -16,10 +17,10 @@ namespace RubberBanding {
      */
     public class AARect
     {
-        public float Left { get; private set; }
-        public float Right { get; private set; }
-        public float Top { get; private set; }
-        public float Bottom { get; private set; }
+        public float Left { get; set; }
+        public float Right { get; set; }
+        public float Top { get; set; }
+        public float Bottom { get; set; }
 
         public AARect(float top, float right, float bottom, float left)
         {
@@ -71,6 +72,15 @@ namespace RubberBanding {
                 new AARect(horCenter, vertCenter, Bottom, Left),  // BL
                 new AARect(horCenter, Right, Bottom, vertCenter)  // BR
             };
+        }
+
+        public static AARect GetBoundingRectangle(List<rbPoint> points)
+        {
+            float left = points.Min(e => e.Pos.x);
+            float right = points.Max(e => e.Pos.x);
+            float top = points.Max(e => e.Pos.y);
+            float bottom = points.Min(e => e.Pos.y);
+            return new AARect(top, right, bottom, left);
         }
     }
 }

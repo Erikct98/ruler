@@ -11,14 +11,12 @@ namespace RubberBanding {
         public RbQuadTree(List<rbPoint> points)
         {
             // Create bounding box of all points
-            float left = points.Min(e => e.Pos.x);
-            float right = points.Max(e => e.Pos.x) + 0.00001f;
-            float top = points.Max(e => e.Pos.y);
-            float bottom = points.Min(e => e.Pos.y) + 0.00001f;
-            AARect rectangle = new AARect(top, right, bottom, left);
+            var boundingRectangle = AARect.GetBoundingRectangle(points);
+            boundingRectangle.Bottom += 0.000001f;
+            boundingRectangle.Right += 0.000001f;
 
             // Build QuadTree
-            Root = Build(null, points, rectangle);
+            Root = Build(null, points, boundingRectangle);
         }
 
         private QNode Build(QNode parent, List<rbPoint> points, AARect rectangle)
