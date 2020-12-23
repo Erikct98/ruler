@@ -167,6 +167,21 @@ namespace RubberBanding {
             }
             return score;
         }
+
+        public List<rbPoint> GetReplacements(rbPoint p)
+        {
+            List<rbPoint> points = new List<rbPoint>();
+            int idx = convexHull.IndexOf(p);
+            if (idx >= 0)
+            {
+                int n = convexHull.Count;
+                rbPoint prev = convexHull[(idx - 1 + n) % n];
+                rbPoint next = convexHull[(idx + 1) % n];
+                AARect range = AARect.GetBoundingRectangle(new List<rbPoint>() { p, next, prev });
+                points = RangeQuery.FindInRange(range);
+            }
+            return points;
+        }
     }
 }
 

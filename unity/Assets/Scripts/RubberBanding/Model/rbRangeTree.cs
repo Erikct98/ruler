@@ -29,12 +29,18 @@
         /// <returns>The root of the 2D range tree</returns>
         private RTNode Build(List<rbPoint> xSorted, List<rbPoint> ySorted)
         {
+            if (ySorted.Count == 0)
+            {
+                return null;
+            }
+
             // Create node
             RTNode v = new RTNode();
 
             // Create ADS
             v.Ads = new RbBST(ySorted);
 
+            
             if (ySorted.Count == 1)
             {
                 // Leaf node
@@ -43,7 +49,7 @@
             else
             {
                 // Determine x_mid
-                int medIdx = xSorted.Capacity / 2;
+                int medIdx = xSorted.Count / 2;
                 rbPoint x_mid = xSorted[medIdx];
 
                 // Store point in this node
@@ -98,59 +104,61 @@
             {
                 return points; // Returning and empty list.
             }
-            else if (v_split.Left == null || v_split.Right == null)
+            else
             {
-                // v_split is a leaf node
-                float x = v_split.Point.Pos.x;
-                if (leftBound <= x && x <= rightBound)
+                if (range2D.Contains(v_split.Point))
                 {
                     points.Add(v_split.Point);
                 }                
             }
-            else
+
+            // Walk through left subtree
+            RTNode v = v_split.Left;
+            while (v != null)
             {
-                // Walk through left subtree
-                RTNode v = v_split.Left;
-                while (v != null && (v.Left != null || v.Right != null))
+                float x = v.Point.Pos.x;
+                if (leftBound <= x)
                 {
-                    // v is not a leaf
-                    float x = v.Point.Pos.x;
-                    if (leftBound <= x)
+                    if (range2D.Contains(v.Point))
                     {
-                        if (v.Right != null)
-                        {
-                            points.AddRange(v.Right.Ads.FindInRange(range2D.Bottom, range2D.Top));
-                        }                        
-                        v = v.Left;
+                        points.Add(v.Point);
                     }
-                    else
+                    if (v.Right != null)
                     {
-                        v = v.Right;
-                    }
+                        points.AddRange(v.Right.Ads.FindInRange(range2D.Bottom, range2D.Top));
+                    }                        
+                    v = v.Left;
                 }
-
-                // Check point at end
-
-                // Walk through right subtree
-                v = v_split.Right;
-                while (v != null && (v.Left != null || v.Right != null))
+                else
                 {
-                    // v is not a leaf
-                    float x = v.Point.Pos.x;
-                    if (x <= rightBound)
-                    {
-                        if (v.Left != null)
-                        {
-                            points.AddRange(v.Left.Ads.FindInRange(range2D.Bottom, range2D.Top));
-                        }                        
-                        v = v.Right;
-                    }
-                    else
-                    {
-                        v = v.Left;
-                    }
+                    v = v.Right;
                 }
             }
+
+            // Walk through right subtree
+            v = v_split.Right;
+            while (v != null && (v.Left != null || v.Right != null))
+            {
+                // v is not a leaf
+                float x = v.Point.Pos.x;
+                if (x <= rightBound)
+                {
+                    if (range2D.Contains(v.Point))
+                    {
+                        points.Add(v.Point);
+                    }
+                    if (v.Left != null)
+                    {
+                        points.AddRange(v.Left.Ads.FindInRange(range2D.Bottom, range2D.Top));
+                    }                        
+                    v = v.Right;
+                }
+                else
+                {
+                    v = v.Left;
+                }
+            }
+
             return points;
         }
 

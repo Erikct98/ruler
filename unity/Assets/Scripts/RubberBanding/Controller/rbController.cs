@@ -77,13 +77,16 @@
             // compute convex hull
             this.rb_convexHull.convexHull = this.rb_convexHull.BuildConvexHull(rb_points);
 			// Draws the currently stored convex hull
-			DrawConvexHull();
+			DrawConvexHull(new List<rbPoint>());
 		}
 		
 		// Update is called once per frame
 		void Update () {
 			
 			if (this.rb_chosenPoint != null) {
+                // Find which points are considered for CH
+                List<rbPoint> consideredPoints = rb_convexHull.GetReplacements(rb_chosenPoint);
+
 				// Delete this point, recompute hull, compute score
 				int score = this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint);
 				UpdateScore(score);
@@ -92,10 +95,10 @@
 				this.rb_chosenPoint = null;
 
 				// Redraw the updated hull
-				DrawConvexHull();
+				DrawConvexHull(consideredPoints);
 
 				// Check if this move ends the game
-				if(CheckGameOver()) {
+				if (CheckGameOver()) {
 					Debug.Log("End game");
 					// SceneManager.LoadScene(m_victoryScene);
 					// Do endscreen stuff, show winner, scores
@@ -133,7 +136,7 @@
 			}
 		}
 
-		public void DrawConvexHull() {
+		public void DrawConvexHull(List<rbPoint> consideredPoints) {
 			ClearConvexHullDrawing();
 			rbPoint prev = null;
 			rb_convexHull.convexHull.ForEach((point) => {
@@ -145,12 +148,23 @@
 			});
 			// Add line segment between first and last element as well
 			AddSegment(rb_convexHull.convexHull[0], rb_convexHull.convexHull[rb_convexHull.convexHull.Count - 1]);
+
+
+            // Add line above all considered points
+            consideredPoints.ForEach((point) => {
+                AddSegment(point.Pos, point.Pos + new Vector2(0, 25));
+            });
 		}
 
-		public void AddSegment(rbPoint rb_point_1, rbPoint rb_point_2)
+        public void AddSegment(rbPoint rb_point_1, rbPoint rb_point_2)
+        {
+            AddSegment(rb_point_1.Pos, rb_point_2.Pos);
+        }
+
+        public void AddSegment(Vector2 one, Vector2 two)
         {
 
-			var segment = new Util.Geometry.LineSegment(rb_point_1.Pos, rb_point_2.Pos);
+			var segment = new Util.Geometry.LineSegment(one, two);
 
             rb_segments.Add(segment);
 
@@ -163,7 +177,7 @@
             mesh.GetComponent<rbSegment>().segment = segment;
 
             var meshScript = mesh.GetComponent<ReshapingMesh>();
-            meshScript.CreateNewMesh(rb_point_1.transform.position, rb_point_2.transform.position);
+            meshScript.CreateNewMesh(new Vector3(one.x, one.y, -1), new Vector3(two.x, two.y, -1));
             
         }
 
