@@ -69,7 +69,7 @@
 
             // create point set
             this.rb_points = FindObjectsOfType<rbPoint>().ToList();
-			Debug.Log(this.rb_points.Count());
+			//Debug.Log(this.rb_points.Count());
 
 			this.rb_segments = new List<LineSegment>();
 			this.rb_convexHull = new rbConvexHull();
@@ -88,7 +88,11 @@
                 List<rbPoint> consideredPoints = rb_convexHull.GetReplacements(rb_chosenPoint);
 
 				// Delete this point, recompute hull, compute score
-				int score = this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint);
+				int score;
+				List<rbPoint> area;
+				this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint, true, out score, out area);
+				Debug.Log(score);
+				Debug.Log(area.Count());
 				UpdateScore(score);
 
 				// Reset chosen point
@@ -140,7 +144,7 @@
 			ClearConvexHullDrawing();
 			rbPoint prev = null;
 			rb_convexHull.convexHull.ForEach((point) => {
-				Debug.Log(point);
+				//Debug.Log(point);
 				if (prev != null) {
 					AddSegment(prev, point);
 				}

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 namespace RubberBanding {
     public class rbConvexHull {
@@ -9,6 +10,12 @@ namespace RubberBanding {
         rbPoint pre = null;
         rbPoint post = null;
         rbPoint removed = null;
+
+        public struct Result
+        {
+            public int areaScore;
+            public List<rbPoint> area;
+        }
 
         float CrossProduct(rbPoint A, rbPoint B, rbPoint C)
         {
@@ -61,47 +68,30 @@ namespace RubberBanding {
             return convexHull;
         }
 
-        public bool RemovePoint(rbPoint p)
+        private void RemovePoint(rbPoint p, bool remove)
         {
             /*
             * TODO: remove p from tree
             * return if success
             */
             int n = this.convexHull.Count();
+            int index = this.convexHull.IndexOf(p);
 
-            if (this.convexHull[0].Equals(p))
+            this.removed = p;
+            this.pre = this.convexHull[(index - 1 + n) % n];
+            this.post = this.convexHull[(index + 1) % n];
+
+            if (remove)
             {
-                this.removed = p;
-                this.pre = this.convexHull[n - 1];
-                this.post = this.convexHull[1];
-                // this.RangeQuery.RemovePoint(p);//remove if switching to range tree
-            } else if (this.convexHull[n - 1].Equals(p))
-            {
-                this.removed = p;
-                this.pre = this.convexHull[n - 2];
-                this.post = this.convexHull[0];
-                // this.RangeQuery.RemovePoint(p);//remove if switching to range tree
-            } else
-            {
-                for (int i = 1; i < n - 1; i++)
-                {
-                    if (this.convexHull[i].Equals(p))
-                    {
-                        this.removed = p;
-                        this.pre = this.convexHull[i - 1];
-                        this.post = this.convexHull[i + 1];
-                        // this.RangeQuery.RemovePoint(p);//remove if switching to range tree
-                        break;
-                    }
-                }
+                p.Removed = true;
+                this.convexHull.Remove(p);
             }
-
-            p.Removed = true;
-            return this.convexHull.Remove(p);
         }
 
-        public int UpdateConvexHull(rbPoint p) {
-            RemovePoint(p);
+        public void UpdateConvexHull(rbPoint p, bool remove, out int areaScore, out List<rbPoint> area) {
+            //Debug.Log( "Before remove point");
+            //Debug.Log(p);
+            RemovePoint(p, remove);
             List<rbPoint> queryPoints = new List<rbPoint>();
             queryPoints.Add(this.pre);
             queryPoints.Add(this.post);
@@ -109,50 +99,97 @@ namespace RubberBanding {
 
             AARect rect = AARect.GetBoundingRectangle(queryPoints);
             List<rbPoint> points = this.RangeQuery.FindInRange(rect);
-            Debug.Log("RangeQuery points");
-            Debug.Log(points.Count());
+            //Debug.Log("RangeQuery points");
+            //Debug.Log(points.Count());
+            // Debug.Log("pre");
+            // Debug.Log(this.pre.Pos);
+            // Debug.Log("post");
+            // Debug.Log(this.post.Pos);
+
 
             points.Add(this.pre);
             points.Add(this.post);
             points.Remove(p);
-
+            
             points.Sort((a, b) =>
             a.Pos.x == b.Pos.x ? a.Pos.y.CompareTo(b.Pos.y) : a.Pos.x.CompareTo(b.Pos.x));
 
             int n = points.Count();
             List<rbPoint> patch = new List<rbPoint>(new rbPoint[n]);
+            List<rbPoint> temp;
 
-            int k = 0;
-            if (CrossProduct(points[0], this.removed, points[n - 1]) == 0)
+            if (CrossProduct(this.pre, this.removed, this.post) == 0)
             {
-                return 0;
+                //return new Result{areaScore = 0, area = null};
+                areaScore = 0;
+                area = null;
+            } else if (points[0] != this.pre && points[0] != this.post)
+            {
+                
+                if (points[n - 1] == this.pre)
+                {
+                    if (this.pre.Pos.y > this.post.Pos.y)
+                    {
+                        patch = upper(points);
+                        temp = lower(points.Take(points.IndexOf(this.post) + 1).ToList());
+                    } else
+                    {
+                        temp = lower(points);
+                        patch = upper(points.Take(points.IndexOf(this.post) + 1).ToList());
+                    }
+                } else {
+                    if (this.post.Pos.y > this.pre.Pos.y)
+                    {
+                        patch = upper(points);
+                        temp = lower(points.Take(points.IndexOf(this.pre) + 1).ToList());
+                    } else
+                    {
+                        temp = lower(points);
+                        patch = upper(points.Take(points.IndexOf(this.pre) + 1).ToList());
+                    }
+                }
+                temp.Remove(points[0]);
+                temp.Reverse();
+                patch.AddRange(temp);
+            } else if (points[n - 1] != this.pre && points[n - 1] != this.post)
+            {
+                if (points[0] == this.pre)
+                {
+                    if (this.pre.Pos.y > this.post.Pos.y)
+                    {
+                        temp = upper(points);
+                        patch = lower(points.Skip(points.IndexOf(this.post)).ToList());
+                    } else
+                    {
+                        patch = lower(points);
+                        temp = upper(points.Skip(points.IndexOf(this.post)).ToList());
+                    }
+                } else {
+                    if (this.post.Pos.y > this.pre.Pos.y)
+                    {
+                        temp = upper(points);
+                        patch = lower(points.Skip(points.IndexOf(this.pre)).ToList());
+                    } else
+                    {
+                        patch = lower(points);
+                        temp = upper(points.Skip(points.IndexOf(this.pre)).ToList());
+                    }
+                }
+                temp.Remove(points[n - 1]);
+                patch.AddRange(temp);
             } else if (CrossProduct(points[0], this.removed, points[n - 1]) > 0)
             {
-                k = 0;
-                for (int i = 0; i < n; i++)
-                {
-                    while (k >= 2 && CrossProduct(patch[k - 2], patch[k - 1], points[i]) <= 0)
-                    {
-                        k--;
-                    }
-                    patch[k++] = points[i];
-                }
+                patch = lower(points);
             } else if (CrossProduct(points[0], this.removed, points[n - 1]) < 0)
             {
-                k = 0;
-                for (int i = n - 1; i >= 0; i--)
-                {
-                    while (k >= 2 && CrossProduct(patch[k - 2], patch[k - 1], points[i]) <= 0)
-                    {
-                        k--;
-                    }
-                    patch[k++] = points[i];
-                }
+                patch = upper(points);
             }
 
-            patch = patch.Take(k).ToList();
-            n = patch.Count();
 
+            // Debug.Log("patch");
+            // Debug.Log(patch.Count());
+
+            n = patch.Count();
             int index = this.convexHull.IndexOf(patch[n - 1]);
 
             for (int i = n - 2; i > 0; i--)
@@ -163,9 +200,47 @@ namespace RubberBanding {
             int score = 0;
             for (int i = 0; i < n - 1; i++)
             {
-                score += (int) (patch[i].Pos.x * (patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x * (this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x * (patch[i].Pos.y - patch[i + 1].Pos.y));
+                score += (int) Math.Abs(patch[i].Pos.x * (patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x * (this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x * (patch[i].Pos.y - patch[i + 1].Pos.y));
             }
-            return score;
+
+            //return new Result{areaScore = score, area = patch};
+            areaScore = score;
+            patch.Add(p);
+            area = patch;
+        }
+
+        private List<rbPoint> lower(List<rbPoint> points)
+        {
+            int n = points.Count();
+            List<rbPoint> lower = new List<rbPoint>(new rbPoint[n]);
+
+            int k = 0;
+            for (int i = 0; i < n; i++)
+            {
+                while (k >= 2 && CrossProduct(lower[k - 2], lower[k - 1], points[i]) <= 0)
+                {
+                    k--;
+                }
+                lower[k++] = points[i];
+            }
+            return lower.Take(k).ToList();
+        }
+
+        private List<rbPoint> upper(List<rbPoint> points)
+        {
+            int n = points.Count();
+            List<rbPoint> upper = new List<rbPoint>(new rbPoint[n]);
+
+            int k = 0;
+            for (int i = n - 1; i >= 0; i--)
+            {
+                while (k >= 2 && CrossProduct(upper[k - 2], upper[k - 1], points[i]) <= 0)
+                {
+                    k--;
+                }
+                upper[k++] = points[i];
+            }
+            return upper.Take(k).ToList();
         }
 
         public List<rbPoint> GetReplacements(rbPoint p)
