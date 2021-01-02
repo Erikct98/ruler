@@ -19,7 +19,7 @@ namespace RubberBanding {
         public List<rbPoint> BuildConvexHull(List<rbPoint> points)
         {
             RangeQuery = new RbQuadTree(points);
-            //RangeQuery = new RbRangeTree(points);
+            // RangeQuery = new RbRangeTree(points);
             
             if (points.Count() <= 1)
             {
@@ -165,6 +165,9 @@ namespace RubberBanding {
             {
                 score += (int) (patch[i].Pos.x * (patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x * (this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x * (patch[i].Pos.y - patch[i + 1].Pos.y));
             }
+
+            Debug.Log("SCORE points");
+            Debug.Log(score);
             return score;
         }
     }
