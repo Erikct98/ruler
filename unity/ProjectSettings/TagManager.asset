@@ -9,6 +9,8 @@ TagManager:
   - AdvanceButtonContainer
   - HintButtonContainer
   - Soldier
+  - Segment
+  - PreviewSegment
   layers:
   - Default
   - TransparentFX

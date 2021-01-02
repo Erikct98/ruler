@@ -7,6 +7,9 @@
         public Vector2 Pos { get; private set; }
         public bool Removed { get; set; }
 
+        private Renderer renderer;
+        private Color originalColor;
+
         private rbController rb_controller;
 
         // True if the point is deleted from the point set by the players
@@ -15,6 +18,12 @@
         public rbPoint(Vector2 pos){
             Pos = pos;
             Removed = false;
+        }
+
+        void Start()
+        {   
+            renderer = GetComponent<Renderer>();
+            originalColor = renderer.material.color;
         }
         private void Awake()
         {
@@ -43,7 +52,9 @@
             /* 
             * TODO: provide overview of what surface would
             * be added to score if this object was selected.
-            */      
+            */
+            renderer.material.color = Color.red; 
+            rb_controller.PreviewConvexHull(this);   
         }
 
         private void OnMouseExit()
@@ -51,6 +62,8 @@
             /*
             * TODO: stop drawing score update
             */
+            renderer.material.color = originalColor;
+            rb_controller.clearPreview();
         }
     }
 }

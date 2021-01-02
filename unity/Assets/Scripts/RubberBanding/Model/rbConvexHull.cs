@@ -89,6 +89,7 @@ namespace RubberBanding {
         }
 
         public void UpdateConvexHull(rbPoint p, bool remove, out int areaScore, out List<rbPoint> area) {
+            
             //Debug.Log( "Before remove point");
             //Debug.Log(p);
             RemovePoint(p, remove);
