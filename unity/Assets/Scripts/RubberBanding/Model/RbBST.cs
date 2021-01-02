@@ -37,22 +37,33 @@
             List<rbPoint> points = new List<rbPoint>();
 
             // Look for split node
-            BstNode split = Root;
-            while (split != null)
+            BstNode v_split = Root;
+            while (v_split != null)
             {
-                float y = split.Point.Pos.y;
+                float y = v_split.Point.Pos.y;
                 if (rightBound < y)
                 {
-                    split = split.Left;
+                    v_split = v_split.Left;
                 }
                 else if (y < leftBound)
                 {
-                    split = split.Right;
+                    v_split = v_split.Right;
                 }
+                else break;
+            }
+
+            // Add point if applicable
+            if (v_split == null)
+            {
+                return points;
+            }
+            else
+            {
+                points.Add(v_split.Point);
             }
 
             // Search left subtree
-            BstNode elt = split;
+            BstNode elt = v_split.Left;
             while (elt != null)
             {
                 float y = elt.Point.Pos.y;
@@ -73,7 +84,7 @@
 
 
             // Search right subtree
-            elt = split;
+            elt = v_split.Right;
             while (elt != null)
             {
                 float y = elt.Point.Pos.y;
