@@ -22,8 +22,8 @@
 
 		// List of instantiated objects for a level
 		private List<GameObject> instantiatedObjects;
-		private rbPlayer player;
-		private rbPlayer opponent;
+		public rbPlayer player;
+		public rbPlayer opponent;
 
 		// Current convex hull
 		internal rbConvexHull rb_convexHull;
@@ -94,7 +94,7 @@
 				int score;
 				List<rbPoint> area;
 				if (this.rb_convexHull.convexHull.IndexOf(this.rb_chosenPoint) != -1) {
-					
+
 				}
 				this.rb_convexHull.UpdateConvexHull(this.rb_chosenPoint, true, out score, out area);
 				if (area != null) {

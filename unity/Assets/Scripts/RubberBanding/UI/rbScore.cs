@@ -13,7 +13,12 @@ namespace RubberBanding
         private void Start()
         {
             rb_scoretext.GetComponent<Text>().text = "0";
+            rb_controller = FindObjectOfType<rbController>();
             score = 0;
+        }
+
+        private void Update() {
+            SetScore(rb_controller.player.score);
         }
         public void SetScore(int newScore)
         {
