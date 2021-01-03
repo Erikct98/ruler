@@ -74,7 +74,7 @@ namespace RubberBanding {
             * TODO: remove p from tree
             * return if success
             */
-            int n = this.convexHull.Count();
+            int n = this.convexHull.Count;
             int index = this.convexHull.IndexOf(p);
 
             this.removed = p;
@@ -189,15 +189,17 @@ namespace RubberBanding {
 
             // Debug.Log("patch");
             // Debug.Log(patch.Count());
-
             n = patch.Count();
-            int index = this.convexHull.IndexOf(patch[n - 1]);
+            // Only update the convex hull if we actually remove this point
+            if (remove) {
+                int index = this.convexHull.IndexOf(patch[n - 1]);
 
-            for (int i = n - 2; i > 0; i--)
-            {
-                this.convexHull.Insert(index, patch[i]);
+                for (int i = n - 2; i > 0; i--)
+                {
+                    this.convexHull.Insert(index, patch[i]);
+                }
             }
-
+            
             int score = 0;
             for (int i = 0; i < n - 1; i++)
             {

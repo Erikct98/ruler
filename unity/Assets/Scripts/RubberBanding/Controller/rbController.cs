@@ -176,22 +176,28 @@
 			int score;
 			List<rbPoint> area;
 			LineSegment newSegment;
-			this.rb_convexHull.UpdateConvexHull(previewPoint, false, out score, out area);
-			rbPoint prev = null;
-			if (area != null) {
-				area.ForEach((point) => {
-					//Debug.Log(point);
-					if (prev != null) {
-						AddSegment(prev, point, out newSegment);
-						AddSegmentMesh(newSegment, "PreviewSegment");
-					}
-					prev = point;
-				});
-				Debug.Log(area.Count);
-				// Add line segment between first and last element as well
-				AddSegment(area[0], area[area.Count - 1], out newSegment);
-				AddSegmentMesh(newSegment, "PreviewSegment", Color.red);
+			var index = this.rb_convexHull.convexHull.IndexOf(previewPoint);
+			Debug.Log(index);
+			if (index != -1) {
+				Debug.Log("loool");
+				this.rb_convexHull.UpdateConvexHull(previewPoint, false, out score, out area);
+				rbPoint prev = null;
+				if (area != null) {
+					area.ForEach((point) => {
+						//Debug.Log(point);
+						if (prev != null) {
+							AddSegment(prev, point, out newSegment);
+							AddSegmentMesh(newSegment, "PreviewSegment");
+						}
+						prev = point;
+					});
+					// Debug.Log(area.Count);
+					// Add line segment between first and last element as well
+					AddSegment(area[0], area[area.Count - 1], out newSegment);
+					AddSegmentMesh(newSegment, "PreviewSegment", Color.red);
+				}
 			}
+			
 		}
 
 		
