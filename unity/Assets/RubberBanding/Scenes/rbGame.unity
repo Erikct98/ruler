@@ -471,6 +471,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1630637719051315320, guid: c76a95e132198794a8557eb4d5eafca3,
         type: 3}
+    - target: {fileID: 2591328699872053768, guid: 84a0172dc2c9557419c2ca91068fc4d2,
+        type: 3}
+      propertyPath: rb_PreviewSegmentMeshPrefab
+      value: 
+      objectReference: {fileID: 3134073908033150664, guid: 1a46bc4a56df47243aa936c1ea37a737,
+        type: 3}
+    - target: {fileID: 2591328699872053768, guid: 84a0172dc2c9557419c2ca91068fc4d2,
+        type: 3}
+      propertyPath: rb_SegmentMeshPrefab
+      value: 
+      objectReference: {fileID: 3134073908033150664, guid: 1a46bc4a56df47243aa936c1ea37a737,
+        type: 3}
     - target: {fileID: 4595153036817461642, guid: 84a0172dc2c9557419c2ca91068fc4d2,
         type: 3}
       propertyPath: m_Name
