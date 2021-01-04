@@ -196,14 +196,14 @@
 					area.ForEach((point) => {
 						if (prev != null) {
 							AddSegment(prev, point, out newSegment);
-							AddSegmentMesh(newSegment, "PreviewSegment");
+							AddSegmentMesh(newSegment, "PreviewSegment", rb_PreviewSegmentMeshPrefab);
 						}
 						prev = point;
 					});
 					// Debug.Log(area.Count);
 					// Add line segment between first and last element as well
 					AddSegment(area[0], area[area.Count - 1], out newSegment);
-					AddSegmentMesh(newSegment, "PreviewSegment", Color.red);
+					AddSegmentMesh(newSegment, "PreviewSegment", rb_PreviewSegmentMeshPrefab);
 				}
 			}
 			
@@ -223,11 +223,11 @@
         }
 
 		private GameObject AddSegmentMesh(LineSegment rb_segment, string tag) {
-			return AddSegmentMesh(rb_segment, tag, new Color());
+			return AddSegmentMesh(rb_segment, tag, rb_SegmentMeshPrefab);
 		}
-		private GameObject AddSegmentMesh(LineSegment rb_segment, string tag, Color color) {
+		private GameObject AddSegmentMesh(LineSegment rb_segment, string tag, GameObject prefab) {
 			// instantiate new road mesh
-            var mesh = Instantiate(rb_SegmentMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+            var mesh = Instantiate(prefab, Vector3.forward, Quaternion.identity) as GameObject;
             mesh.transform.parent = this.transform;
 			mesh.tag = tag;
             instantiatedObjects.Add(mesh);
