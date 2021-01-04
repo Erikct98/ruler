@@ -188,9 +188,8 @@
 			List<rbPoint> area;
 			LineSegment newSegment;
 			var index = this.rb_convexHull.convexHull.IndexOf(previewPoint);
-			Debug.Log(index);
+
 			if (index != -1) {
-				Debug.Log("loool");
 				this.rb_convexHull.UpdateConvexHull(previewPoint, false, out score, out area);
 				rbPoint prev = null;
 				if (area != null) {

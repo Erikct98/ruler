@@ -89,7 +89,7 @@ namespace RubberBanding {
         }
 
         public void UpdateConvexHull(rbPoint p, bool remove, out int areaScore, out List<rbPoint> area) {
-            
+            var isPointOnHull = convexHull.IndexOf(p) != -1;
             //Debug.Log( "Before remove point");
             //Debug.Log(p);
             RemovePoint(p, remove);
@@ -201,10 +201,15 @@ namespace RubberBanding {
             }
             
             int score = 0;
-            for (int i = 0; i < n - 1; i++)
-            {
-                score += (int) Math.Abs(patch[i].Pos.x * (patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x * (this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x * (patch[i].Pos.y - patch[i + 1].Pos.y));
+            if (isPointOnHull) {
+                for (int i = 0; i < n - 1; i++)
+                {
+                    score += (int) Math.Abs(patch[i].Pos.x * (patch[i + 1].Pos.y - this.removed.Pos.y) + patch[i + 1].Pos.x * (this.removed.Pos.y - patch[i].Pos.y) + this.removed.Pos.x * (patch[i].Pos.y - patch[i + 1].Pos.y));
+                }
+            } else {
+                score += 5000;
             }
+            
 
             //return new Result{areaScore = score, area = patch};
             areaScore = score;
