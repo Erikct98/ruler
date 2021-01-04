@@ -226,11 +226,6 @@
 
             var meshScript = mesh.GetComponent<ReshapingMesh>();
             meshScript.CreateNewMesh(new Vector3(rb_segment.Point1.x, rb_segment.Point1.y, -1), new Vector3(rb_segment.Point2.x, rb_segment.Point2.y, -1));
-			var meshRenderer = mesh.GetComponent<Renderer>();
-				meshRenderer.material.SetColor("_Color", Random.ColorHSV());
-			if (color != null) {
-				
-			}
 
 			return mesh;
 		}

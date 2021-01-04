@@ -475,7 +475,7 @@ PrefabInstance:
         type: 3}
       propertyPath: rb_PreviewSegmentMeshPrefab
       value: 
-      objectReference: {fileID: 3134073908033150664, guid: 1a46bc4a56df47243aa936c1ea37a737,
+      objectReference: {fileID: 2387087007790525708, guid: 192840e7ab7a19b4b8ec1d8978f3c8e8,
         type: 3}
     - target: {fileID: 2591328699872053768, guid: 84a0172dc2c9557419c2ca91068fc4d2,
         type: 3}
