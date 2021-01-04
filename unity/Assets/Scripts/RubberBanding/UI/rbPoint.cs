@@ -53,7 +53,11 @@
             * TODO: provide overview of what surface would
             * be added to score if this object was selected.
             */
-            renderer.material.color = Color.red; 
+            if (rb_controller.turn == 0) {
+                renderer.material.color = Color.blue; 
+            } else {
+                renderer.material.color = Color.red; 
+            }
             rb_controller.PreviewConvexHull(this);   
         }
 
