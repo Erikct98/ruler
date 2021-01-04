@@ -483,6 +483,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3134073908033150664, guid: 1a46bc4a56df47243aa936c1ea37a737,
         type: 3}
+    - target: {fileID: 2591328699872053768, guid: 84a0172dc2c9557419c2ca91068fc4d2,
+        type: 3}
+      propertyPath: rb_player_1_score
+      value: 
+      objectReference: {fileID: 1339893257}
+    - target: {fileID: 2591328699872053768, guid: 84a0172dc2c9557419c2ca91068fc4d2,
+        type: 3}
+      propertyPath: rb_player_2_score
+      value: 
+      objectReference: {fileID: 1085816360}
     - target: {fileID: 4595153036817461642, guid: 84a0172dc2c9557419c2ca91068fc4d2,
         type: 3}
       propertyPath: m_Name
@@ -775,6 +785,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1992362412097280909, guid: c76a95e132198794a8557eb4d5eafca3,
     type: 3}
   m_PrefabInstance: {fileID: 823545753}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1085816360 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7188124810910339030, guid: ed3c75b3d892744419c7cd72637edc07,
+    type: 3}
+  m_PrefabInstance: {fileID: 7188124810545307624}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1339893257 stripped
 GameObject:
@@ -1289,7 +1305,8 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7721085410347675906, guid: ed3c75b3d892744419c7cd72637edc07, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ed3c75b3d892744419c7cd72637edc07, type: 3}
 --- !u!1001 &8213545942018519894
 PrefabInstance:

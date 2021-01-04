@@ -18,7 +18,7 @@ namespace RubberBanding
         }
 
         private void Update() {
-            SetScore(rb_controller.player.score);
+            //SetScore(rb_controller.player.score);
         }
         public void SetScore(int newScore)
         {

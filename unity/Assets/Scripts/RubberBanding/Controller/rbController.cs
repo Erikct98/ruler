@@ -4,6 +4,7 @@
     using System.Linq;
 	using Util.Geometry;
 	using General.Model;
+	using UnityEngine.UI;
 
 	public class rbController : MonoBehaviour {
 
@@ -19,6 +20,11 @@
 
 		private GameObject rb_pointPrefab;
         [SerializeField]
+		public GameObject rb_player_1_score;
+		[SerializeField]
+
+		public GameObject rb_player_2_score;
+		[SerializeField]
 
 		// List of instantiated objects for a level
 		private List<GameObject> instantiatedObjects;
@@ -75,6 +81,9 @@
 
 			this.rb_segments = new List<LineSegment>();
 			this.rb_convexHull = new rbConvexHull();
+
+			rb_player_1_score.GetComponent<Text>().text = "0";
+			rb_player_2_score.GetComponent<Text>().text = "0";
 			
             // compute convex hull
             this.rb_convexHull.convexHull = this.rb_convexHull.BuildConvexHull(rb_points);
@@ -144,8 +153,10 @@
 		public void UpdateScore(int score) {
 			if(turn == player.id) {
    				player.score += score;
+				rb_player_1_score.GetComponent<Text>().text = player.score.ToString("F0");
 			} else {
 				opponent.score += score;
+				rb_player_2_score.GetComponent<Text>().text = opponent.score.ToString("F0");
 			}
 		}
 
