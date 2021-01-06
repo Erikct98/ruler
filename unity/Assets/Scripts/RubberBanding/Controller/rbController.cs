@@ -26,6 +26,9 @@
 		public GameObject rb_player_2_score;
 		[SerializeField]
 
+		private List<rbLevel> rb_levels;
+		[SerializeField]
+
 		// List of instantiated objects for a level
 		private List<GameObject> instantiatedObjects;
 		public rbPlayer player;
@@ -42,8 +45,7 @@
 		// ID of the player whose current turn it is
 		internal int turn;
 
-        private List<rbLevel> rb_levels;
-		[SerializeField]
+        
 
 		void Start () {
 			// Init point set from level
@@ -65,16 +67,17 @@
 			// clear old level
 
 			// pick a level
-			// int levelIndex = Random.Range(0, rb_levels.Count);
+			Debug.Log(rb_levels.Count);
+			int levelIndex = Random.Range(0, rb_levels.Count);
+			Debug.Log(levelIndex);
 
-            // // initialize point set from level
-            // foreach (var point in rb_levels[levelIndex].Points)
-            // {
-            //     var obj = Instantiate(rb_pointPrefab, point, Quaternion.identity) as GameObject;
-            //     obj.transform.parent = this.transform;
-            //     instantiatedObjects.Add(obj);
-            // }
-
+            // initialize point set from level
+            foreach (var point in rb_levels[levelIndex].Points)
+            {
+                var obj = Instantiate(rb_pointPrefab, point, Quaternion.identity) as GameObject;
+                obj.transform.parent = this.transform;
+                instantiatedObjects.Add(obj);
+            }
             // create point set
             this.rb_points = FindObjectsOfType<rbPoint>().ToList();
 			//Debug.Log(this.rb_points.Count());
@@ -177,10 +180,10 @@
 			AddSegmentMesh(newSegment, "Segment");
 
             // Add line above all considered points
-            consideredPoints.ForEach((point) => {
-                AddSegment(point.Pos, point.Pos + new Vector2(0, 25), out newSegment);
-				AddSegmentMesh(newSegment, "Segment");
-            });
+            // consideredPoints.ForEach((point) => {
+            //     AddSegment(point.Pos, point.Pos + new Vector2(0, 25), out newSegment);
+			// 	AddSegmentMesh(newSegment, "Segment");
+            // });
 		}
 
 		public void PreviewConvexHull(rbPoint previewPoint) {
