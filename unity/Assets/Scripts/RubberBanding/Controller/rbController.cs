@@ -80,7 +80,7 @@
             }
             // create point set
             this.rb_points = FindObjectsOfType<rbPoint>().ToList();
-			//Debug.Log(this.rb_points.Count());
+			Debug.Log(this.rb_points.Count());
 
 			this.rb_segments = new List<LineSegment>();
 			this.rb_convexHull = new rbConvexHull();
@@ -91,7 +91,7 @@
             // compute convex hull
             this.rb_convexHull.convexHull = this.rb_convexHull.BuildConvexHull(rb_points);
 			// Draws the currently stored convex hull
-			DrawConvexHull(new List<rbPoint>());
+			DrawConvexHull(this.rb_convexHull.convexHull);
 		}
 		
 		// Update is called once per frame

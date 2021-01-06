@@ -10,17 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 791c619ac3bde694eb43469e2f377814, type: 3}
-  m_Name: level1
+  m_Name: level 4
   m_EditorClassIdentifier: 
-  Points:
-  - {x: 650, y: 450}
-  - {x: 700, y: 200}
-  - {x: 800, y: 400}
-  - {x: 800, y: 200}
-  - {x: 650, y: 250}
-  - {x: 1000, y: 350}
-  - {x: 800, y: 325}
-  - {x: 600, y: 400}
-  - {x: 700, y: 175}
-  - {x: 1100, y: 250}
+  Points: []
   ConvexHull: []
