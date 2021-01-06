@@ -5,6 +5,7 @@
 	using Util.Geometry;
 	using General.Model;
 	using UnityEngine.UI;
+	using UnityEngine.SceneManagement;
 
 	public class rbController : MonoBehaviour {
 
@@ -18,6 +19,8 @@
 		private GameObject rb_PreviewSegmentMeshPrefab;
 		[SerializeField]
 
+		private string rb_victoryScene;
+		[SerializeField]
 		private GameObject rb_pointPrefab;
         [SerializeField]
 		public GameObject rb_player_1_score;
@@ -125,8 +128,8 @@
 				// Check if this move ends the game
 				if (CheckGameOver()) {
 					Debug.Log("End game");
-					// SceneManager.LoadScene(m_victoryScene);
-					// Do endscreen stuff, show winner, scores
+					SceneManager.LoadScene("rbVictory");
+					return;
 				} else {
 					// Switch player turn state
 					NextTurn();
