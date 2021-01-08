@@ -191,7 +191,7 @@ namespace RubberBanding {
             // Debug.Log(patch.Count());
             n = patch.Count();
             // Only update the convex hull if we actually remove this point
-            if (remove) {
+            if (remove && isPointOnHull) {
                 int index = this.convexHull.IndexOf(patch[n - 1]);
 
                 for (int i = n - 2; i > 0; i--)
