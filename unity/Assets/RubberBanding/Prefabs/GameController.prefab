@@ -45,6 +45,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb_chosenPoint: {fileID: 0}
   rb_line: {fileID: 0}
-  rb_roadMeshPrefab: {fileID: 0}
+  rb_SegmentMeshPrefab: {fileID: 0}
+  rb_PreviewSegmentMeshPrefab: {fileID: 0}
+  rb_victoryScene: 
   rb_pointPrefab: {fileID: 0}
+  rb_player_1_score: {fileID: 0}
+  rb_player_2_score: {fileID: 0}
+  rb_levels:
+  - {fileID: 11400000, guid: d9130df0e414193449466b72e0e1f3f7, type: 2}
   instantiatedObjects: []

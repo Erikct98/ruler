@@ -70,7 +70,7 @@
 			// clear old level
 
 			// pick a level
-			Debug.Log(rb_levels.Count);
+			// Debug.Log(rb_levels.Count);
 			int levelIndex = Random.Range(0, rb_levels.Count);
 			Debug.Log(levelIndex);
 
@@ -83,7 +83,6 @@
             }
             // create point set
             this.rb_points = FindObjectsOfType<rbPoint>().ToList();
-			Debug.Log(this.rb_points.Count());
 
 			this.rb_segments = new List<LineSegment>();
 			this.rb_convexHull = new rbConvexHull();
