@@ -128,4 +128,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/RubberBanding/Scenes/rbCredits.unity
     guid: 111be74b6edee74448a8ea1a30d93d9b
+  - enabled: 1
+    path: Assets/RubberBanding/Scenes/rbVictory_1.unity
+    guid: 9c5d8ab5a1a20cf4196a223316a73267
+  - enabled: 1
+    path: Assets/RubberBanding/Scenes/rbVictory_2.unity
+    guid: 596fb592405ae4044ba15d73194944b7
   m_configObjects: {}

@@ -128,7 +128,11 @@
 				// Check if this move ends the game
 				if (CheckGameOver()) {
 					Debug.Log("End game");
-					SceneManager.LoadScene("rbVictory");
+					if (player.score >= opponent.score) {
+						SceneManager.LoadScene("rbVictory_1");
+					} else {
+						SceneManager.LoadScene("rbVictory_2");
+					}
 					return;
 				} else {
 					// Switch player turn state
