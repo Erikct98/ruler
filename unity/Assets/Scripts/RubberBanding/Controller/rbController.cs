@@ -51,9 +51,6 @@
         
 
 		void Start () {
-			// Init point set from level
-
-
 			// Init players
 			player = new rbPlayer(0, 0);
 			opponent = new rbPlayer(1, 0);
@@ -67,12 +64,8 @@
 
 		void InitGame() 
 		{
-			// clear old level
-
 			// pick a level
-			// Debug.Log(rb_levels.Count);
 			int levelIndex = Random.Range(0, rb_levels.Count);
-			Debug.Log(levelIndex);
 
             // initialize point set from level
             foreach (var point in rb_levels[levelIndex].Points)
@@ -142,8 +135,6 @@
 
 		void NextTurn()
 		{
-			Debug.Log("Next turn");
-			// @Jurrien van Winden
 			if(turn == player.id) {
    				turn = opponent.id;
 			} else {
@@ -174,7 +165,6 @@
 			rbPoint prev = null;
 			LineSegment newSegment;
 			rb_convexHull.convexHull.ForEach((point) => {
-				//Debug.Log(point);
 				if (prev != null) {
 					AddSegment(prev, point, out newSegment);
 					AddSegmentMesh(newSegment, "Segment");
@@ -184,12 +174,6 @@
 			// Add line segment between first and last element as well
 			AddSegment(rb_convexHull.convexHull[0], rb_convexHull.convexHull[rb_convexHull.convexHull.Count - 1], out newSegment);
 			AddSegmentMesh(newSegment, "Segment");
-
-            // Add line above all considered points
-            // consideredPoints.ForEach((point) => {
-            //     AddSegment(point.Pos, point.Pos + new Vector2(0, 25), out newSegment);
-			// 	AddSegmentMesh(newSegment, "Segment");
-            // });
 		}
 
 		public void PreviewConvexHull(rbPoint previewPoint) {
@@ -209,7 +193,6 @@
 						}
 						prev = point;
 					});
-					// Debug.Log(area.Count);
 					// Add line segment between first and last element as well
 					AddSegment(area[0], area[area.Count - 1], out newSegment);
 					AddSegmentMesh(newSegment, "PreviewSegment", rb_PreviewSegmentMeshPrefab);
@@ -217,9 +200,6 @@
 			}
 			
 		}
-
-		
-
         public void AddSegment(rbPoint rb_point_1, rbPoint rb_point_2, out LineSegment segment)
         {
             AddSegment(rb_point_1.Pos, rb_point_2.Pos, out segment);
