@@ -106,17 +106,22 @@ namespace RubberBanding {
         private List<rbPoint> FindInRange(QNode n, AARect bound)
         {
             List<rbPoint> points = new List<rbPoint>();
-            if (n.point != null && bound.Contains(n.point))
+            if (n.children.Count == 0)
             {
                 // Leaf node
-                points.Add(n.point);
+                if (bound.Contains(n.point))
+                {
+                    points.Add(n.point);
+                }                
             }
             else
             {
                 // Internal node in tree
                 foreach (QNode child in n.children)
                 {
-                    points.AddRange(FindInRange(child, bound));
+                    if (child.boundingRect.Intersects(bound)) {
+                        points.AddRange(FindInRange(child, bound));
+                    }                    
                 }
             }
 
@@ -138,7 +143,8 @@ namespace RubberBanding {
             {
                 this.parent = parent;
                 this.boundingRect = boundingRect;
-                children = new List<QNode>();
+                this.size = size;
+                children = new List<QNode>();                
                 point = null;
             }
         }

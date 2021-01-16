@@ -25,6 +25,8 @@ namespace RubberBanding {
         
         public List<rbPoint> BuildConvexHull(List<rbPoint> points)
         {
+            RbExperiment.RunExperiment();
+
             RangeQuery = new RbQuadTree(points);
             // RangeQuery = new RbRangeTree(points);
             
