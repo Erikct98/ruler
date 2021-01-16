@@ -1,5 +1,6 @@
 ﻿namespace RubberBanding
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -10,15 +11,10 @@
         public RbRangeTree(List<rbPoint> points)
         {
             // Presort list of points on x-coordinate
-            List<rbPoint> xSorted = new List<rbPoint>(points);
-            xSorted.Sort(delegate (rbPoint p1, rbPoint p2) { return p1.Pos.x.CompareTo(p2.Pos.x); });
-
-            // Presort list of points on y-coordinate
-            List<rbPoint> ySorted = points;
-            ySorted.Sort(delegate (rbPoint p1, rbPoint p2) { return p1.Pos.y.CompareTo(p2.Pos.y); });
+            points.Sort(delegate (rbPoint p1, rbPoint p2) { return p1.Pos.x.CompareTo(p2.Pos.x); });
 
             // Build tree
-            Root = Build(xSorted, ySorted);
+            Root = Build(points);
         }
 
         /// <summary>
@@ -27,9 +23,9 @@
         /// <param name="xSorted">All points that need to be inserted, sorted on x-coordinate</param>
         /// <param name="ySorted">All points that need to be inserted, sorted on y-coordinate</param>
         /// <returns>The root of the 2D range tree</returns>
-        private RTNode Build(List<rbPoint> xSorted, List<rbPoint> ySorted)
+        private RTNode Build(List<rbPoint> points)
         {
-            if (ySorted.Count == 0)
+            if (points.Count == 0)
             {
                 return null;
             }
@@ -38,33 +34,29 @@
             RTNode v = new RTNode();
 
             // Create ADS
+            List<rbPoint> ySorted = new List<rbPoint>(points);
+            ySorted.Sort(delegate (rbPoint p1, rbPoint p2) { return p1.Pos.y.CompareTo(p2.Pos.y); });
             v.Ads = new RbBST(ySorted);
 
-            
-            if (ySorted.Count == 1)
+            if (points.Count == 1)
             {
                 // Leaf node
-                v.Point = ySorted[0];
+                v.Point = points[0];
             }
             else
             {
                 // Determine x_mid
-                int medIdx = xSorted.Count / 2;
-                rbPoint x_mid = xSorted[medIdx];
+                int medIdx = points.Count / 2;
+                rbPoint x_mid = points[medIdx];
 
                 // Store point in this node
                 v.Point = x_mid;
 
                 // Recursive build left subtree
-                List<rbPoint> xSortedLeft = new List<rbPoint>(xSorted.Take(medIdx)); // Observe: excludes median
-                ySorted.RemoveAll(p => p.Pos.Equals(x_mid.Pos));
-                List<rbPoint> ySortedLeft = ySorted.FindAll(p => p.Pos.x <= x_mid.Pos.x); // WARNING: it is assumed this function preserves order.
-                v.Left = Build(xSortedLeft, ySortedLeft);
-
-                // Recursively build right subtree
-                List<rbPoint> xSortedRight = new List<rbPoint>(xSorted.Skip(medIdx + 1)); // Observe: skip the median
-                List<rbPoint> ySortedRight = ySorted.FindAll(p => p.Pos.x > x_mid.Pos.x);
-                v.Right = Build(xSortedRight, ySortedRight);
+                List<rbPoint> pointsLeft = new List<rbPoint>(points.Take(medIdx)); // Observe: excludes median
+                List<rbPoint> pointsRight = new List<rbPoint>(points.Skip(medIdx + 1)); // Observe: excludes median
+                v.Left = Build(pointsLeft);
+                v.Right = Build(pointsRight);
             }
 
             return v;
