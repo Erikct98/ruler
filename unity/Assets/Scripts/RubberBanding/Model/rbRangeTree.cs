@@ -57,7 +57,7 @@
 
                 // Recursive build left subtree
                 List<rbPoint> xSortedLeft = new List<rbPoint>(xSorted.Take(medIdx)); // Observe: excludes median
-                ySorted.Remove(x_mid);
+                ySorted.RemoveAll(p => p.Pos.Equals(x_mid.Pos));
                 List<rbPoint> ySortedLeft = ySorted.FindAll(p => p.Pos.x <= x_mid.Pos.x); // WARNING: it is assumed this function preserves order.
                 v.Left = Build(xSortedLeft, ySortedLeft);
 
